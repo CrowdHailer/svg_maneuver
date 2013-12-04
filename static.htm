@@ -8,27 +8,21 @@
 			height: 100%; /* Required to make div fill to screen height, otherwise IE picks smaller image height */
 			margin: 0; 
 			padding: 0; /* Remove standard behaviour for body margin */
-			overflow: hidden;
-		}
-		div {
-			background: red;
-			height: 100%;  /* Included for firefox, otherwise extends off screen */
-			width: 100%
+			overflow: hidden; /*removes scrollbars*/
 		}
 		svg {
+			background: red;
 			height: 100%; /* Includes to stop Opera and firefox extending offscreen*/
 			width: 100%; /*Necessary to center the svg image area horizontally*/
 		}
 	</style>
 </head>
 <body>
-	<div id="svg-container">
-		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2000 1000">
-			<rect height="1000" width="2000" y="0" x="0" fill="#afe9c6"/>
-			<path d="M40,1000,2000,40" stroke="#00aad4" stroke-width="10" fill="none"/>
-			<path d="M40,40,2000,1000" stroke="#00aad4" stroke-width="10" fill="none"/>
-			<text font-size="144px" y="550" x="500" >SVG DOCUMENT</text>
-		</svg>
-	</div>
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2000 1000">
+		<rect height="1000" width="2000" y="0" x="0" fill="#afe9c6"/>
+		<path d="M40,1000,2000,40" stroke="#00aad4" stroke-width="10" fill="none"/>
+		<path d="M40,40,2000,1000" stroke="#00aad4" stroke-width="10" fill="none"/>
+		<text font-size="144px" y="550" x="500" >SVG DOCUMENT</text>
+	</svg>
 </body>
 </html>
