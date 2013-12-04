@@ -12,11 +12,22 @@ var svgManoeuvre = {
 		this.transformGroup.addEventListener('mouseup',function (evt){
 		svgManoeuvre.endMove(evt);
 		},false); 
+		this.transformGroup.attachEvent('touchstart',function (evt){
+		alert('boom');
+		svgManoeuvre.startMove(evt);
+		},false);
+		this.transformGroup.addEventListener('touchmove',function (evt){
+		svgManoeuvre.moveIt(evt);
+		},false); 
+		this.transformGroup.addEventListener('touchend',function (evt){
+		svgManoeuvre.endMove(evt);
+		},false); 
 	},
 	transMatrix: [1,0,0,1,0,0],
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
 	},
+	
 	setMatrix: function (updateMatrix) {
 		if (updateMatrix.length === 6) {
 		strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
@@ -51,7 +62,6 @@ var svgManoeuvre = {
 			var dy = evt.clientY - this.y1;
 			this.x1 = evt.clientX;
 			this.y1 = evt.clientY;
-
 			evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(this.scale*dx, this.scale*dy);
 		}
 	},
