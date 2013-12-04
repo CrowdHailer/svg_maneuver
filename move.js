@@ -1,27 +1,39 @@
+var EventUtill = {
+	addHandler: function (element, type, handler) {
+		if (element.addEventListener) {
+			element.addEventListener(type, handler, false);
+		} else if (element.attachEvent) {
+			element.attachEvent("on" + type, handler);
+		} else {
+			element["on" + type] = handler;
+		}
+	}
+};
+
 var svgManoeuvre = {
 	init: function (svgId) {
-		this.transformGroup = document.getElementById(svgId);
+		transformGroup = document.getElementById(svgId);
 		this.svgElement = document.getElementById('svgDocument');
 		this.view = this.getViewbox(this.svgElement);
-		this.transformGroup.addEventListener('mousedown',function (evt){
+		EventUtill.addHandler(transformGroup, 'mousedown', function(evt) {
 		svgManoeuvre.startMove(evt);
-		},false);
-		this.transformGroup.addEventListener('mousemove',function (evt){
+		});
+		EventUtill.addHandler(transformGroup, 'mousemove', function(evt) {
 		svgManoeuvre.moveIt(evt);
-		},false); 
-		this.transformGroup.addEventListener('mouseup',function (evt){
+		});
+		EventUtill.addHandler(transformGroup, 'mouseup', function(evt) {
 		svgManoeuvre.endMove(evt);
-		},false); 
-		this.transformGroup.attachEvent('touchstart',function (evt){
-		alert('boom');
+		});
+		EventUtill.addHandler(transformGroup, 'touchstart', function(evt) {
 		svgManoeuvre.startMove(evt);
-		},false);
-		this.transformGroup.addEventListener('touchmove',function (evt){
+		});
+		EventUtill.addHandler(transformGroup, 'touchmove', function(evt) {
 		svgManoeuvre.moveIt(evt);
-		},false); 
-		this.transformGroup.addEventListener('touchend',function (evt){
+		});
+		EventUtill.addHandler(transformGroup, 'touchend', function(evt) {
 		svgManoeuvre.endMove(evt);
-		},false); 
+		});
+		this.transformGroup = transformGroup;
 	},
 	transMatrix: [1,0,0,1,0,0],
 	getViewbox: function (svgElement) {
