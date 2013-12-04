@@ -2,8 +2,8 @@ var svgManoeuvre = {
 	init: function (svgID) {
 		alert('boom');
 		this.figure = document.getElementById(svgID);
-		this.width  = document.getElementById('svgDocument').offsetWidth;
-        this.height = document.getElementById('svgDocument').offsetHeight;
+		this.width  = 2000
+        this.height = 1000
 		console.log(this.width);
 	},
 	transMatrix: [1,0,0,1,0,0],
@@ -32,4 +32,4 @@ var svgManoeuvre = {
 	}
 };
 svgManoeuvre.init("manoeuvrable-svg");
-svgManoeuvre.zoom(1);
+svgManoeuvre.zoom(4);
