@@ -17,17 +17,19 @@ var svgManoeuvre = {
 		this.view = this.getViewbox(this.svgElement);
 
 		var hammertime = Hammer(transformGroup).on("touch", function(evt) {
-			console.log('touch');
 			svgManoeuvre.startMove(evt);
+			svgManoeuvre.scale = 1;
 		});
 		var hammertime = Hammer(transformGroup).on("drag", function(evt) {
-			
+			evt.gesture.preventDefault()
 			svgManoeuvre.moveIt(evt);
-			
 		});
 		var hammertime = Hammer(transformGroup).on("release", function(evt) {
-			console.log('end');
 			svgManoeuvre.endMove(evt);
+		});
+		var hammertime = Hammer(transformGroup).on("transform", function(evt) {
+			svgManoeuvre.scale = evt.gesture.scale/svgManoeuvre.scale //scale relative to touchdown
+			svgManoeuvre.zoom(svgManoeuvre.scale)
 		});
 		this.transformGroup = transformGroup;
 	},
@@ -43,6 +45,7 @@ var svgManoeuvre = {
 		}
 	},
 	zoom: function (scale) {
+		console.log(scale);
 		var transMatrix = this.transMatrix;
 		if (scale*transMatrix[0] < 1) { scale = 1 / transMatrix[0]; }
 		for (var i=0; i < transMatrix.length; i++) { transMatrix[i] *= scale; }
@@ -52,10 +55,10 @@ var svgManoeuvre = {
 		this.setMatrix(transMatrix);
 	},
 	pan: function (dx, dy) {
-		console.log(this.transMatrix[4]);
+		
 		this.transMatrix[4] = this.transMatrix[4] + dx;
 		this.transMatrix[5] += dy;
-		console.log(this.transMatrix[4]);
+		
 		this.setMatrix(this.transMatrix);
 	},
 	startMove: function (evt) {
