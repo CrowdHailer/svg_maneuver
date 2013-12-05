@@ -15,23 +15,19 @@ var svgManoeuvre = {
 		transformGroup = document.getElementById(svgId);
 		this.svgElement = document.getElementById('svgDocument');
 		this.view = this.getViewbox(this.svgElement);
-		EventUtill.addHandler(transformGroup, 'mousedown', function(evt) {
-		svgManoeuvre.startMove(evt);
+
+		var hammertime = Hammer(transformGroup).on("touch", function(evt) {
+			console.log('touch');
+			svgManoeuvre.startMove(evt);
 		});
-		EventUtill.addHandler(transformGroup, 'mousemove', function(evt) {
-		svgManoeuvre.moveIt(evt);
+		var hammertime = Hammer(transformGroup).on("drag", function(evt) {
+			
+			svgManoeuvre.moveIt(evt);
+			
 		});
-		EventUtill.addHandler(transformGroup, 'mouseup', function(evt) {
-		svgManoeuvre.endMove(evt);
-		});
-		EventUtill.addHandler(transformGroup, 'touchstart', function(evt) {
-		svgManoeuvre.startMove(evt);
-		});
-		EventUtill.addHandler(transformGroup, 'touchmove', function(evt) {
-		svgManoeuvre.moveIt(evt);
-		});
-		EventUtill.addHandler(transformGroup, 'touchend', function(evt) {
-		svgManoeuvre.endMove(evt);
+		var hammertime = Hammer(transformGroup).on("release", function(evt) {
+			console.log('end');
+			svgManoeuvre.endMove(evt);
 		});
 		this.transformGroup = transformGroup;
 	},
@@ -56,24 +52,26 @@ var svgManoeuvre = {
 		this.setMatrix(transMatrix);
 	},
 	pan: function (dx, dy) {
-		this.transMatrix[4] += dx;
+		console.log(this.transMatrix[4]);
+		this.transMatrix[4] = this.transMatrix[4] + dx;
 		this.transMatrix[5] += dy;
+		console.log(this.transMatrix[4]);
 		this.setMatrix(this.transMatrix);
 	},
 	startMove: function (evt) {
 		this.move = true;
-		this.x1 = evt.clientX;
-		this.y1 = evt.clientY;
+		this.x1 = evt.gesture.center.pageX;
+		this.y1 = evt.gesture.center.pageY;
 		var xScale = this.view[2]/this.svgElement.offsetWidth;
 		var yScale = this.view[3]/this.svgElement.offsetHeight;
 		this.scale = (yScale > xScale) ? yScale : xScale;
 	},
 	moveIt: function (evt) {
 		if (this.move) {
-			var dx = evt.clientX - this.x1;
-			var dy = evt.clientY - this.y1;
-			this.x1 = evt.clientX;
-			this.y1 = evt.clientY;
+			var dx = evt.gesture.center.pageX - this.x1;
+			var dy = evt.gesture.center.pageY - this.y1;
+			this.x1 = evt.gesture.center.pageX;
+			this.y1 = evt.gesture.center.pageY;
 			evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(this.scale*dx, this.scale*dy);
 		}
 	},
