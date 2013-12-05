@@ -31,6 +31,22 @@ var svgManoeuvre = {
 			svgManoeuvre.scale = evt.gesture.scale/svgManoeuvre.scale //scale relative to touchdown
 			svgManoeuvre.zoom(svgManoeuvre.scale)
 		});
+		function displaywheel(e){ 
+				var evt=window.event || e; //equalize event object 
+				var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
+				delta = delta/svgManoeuvre.refactor;
+				console.log(delta);
+				var k = Math.pow(2,delta/720);
+				svgManoeuvre.zoom(k); //delta returns +120 when wheel is scrolled up, -120 when down 
+			} 
+
+			var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
+			this.refactor=(/Firefox/i.test(navigator.userAgent))? 3 : 1;
+			
+			if (document.attachEvent) //if IE (and Opera depending on user setting) 
+				document.attachEvent("on"+mousewheelevt, displaywheel) ;
+			else if (document.addEventListener) //WC3 browsers 
+				document.addEventListener(mousewheelevt, displaywheel, false);
 		this.transformGroup = transformGroup;
 	},
 	transMatrix: [1,0,0,1,0,0],
