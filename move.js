@@ -17,7 +17,7 @@ var svgManoeuvre = {
 		this.view = this.getViewbox(this.svgElement);
 
 		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight", function(evt) {
-			console.log(evt.type);
+			//console.log(evt.type);
 		});
 		hammertime.on("touch", function(evt) {
 			svgManoeuvre.startMove(evt);
@@ -78,26 +78,24 @@ var svgManoeuvre = {
 		this.setMatrix(transMatrix);
 	},
 	pan: function (dx, dy) {
-		
-		this.transMatrix[4] = this.transMatrix[4] + dx;
-		this.transMatrix[5] += dy;
-		
+		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
+		this.transMatrix[4] = this.startMatrix[4] + dx;
+		this.transMatrix[5] = this.startMatrix[5] + dy;
 		this.setMatrix(this.transMatrix);
 	},
 	startMove: function (evt) {
 		this.move = true;
-		this.x1 = evt.gesture.center.pageX;
-		this.y1 = evt.gesture.center.pageY;
+		this.startMatrix = this.transMatrix.slice(0);
 		var xScale = this.view[2]/this.svgElement.offsetWidth;
 		var yScale = this.view[3]/this.svgElement.offsetHeight;
-		this.scale = (yScale > xScale) ? yScale : xScale;
+		console.log(this.svgElement.offsetWidth);
+		console.log(xScale + ' ' + yScale);
+		this.scale = (yScale < xScale) ? yScale : xScale;
 	},
 	moveIt: function (evt) {
 		if (this.move) {
-			var dx = evt.gesture.center.pageX - this.x1;
-			var dy = evt.gesture.center.pageY - this.y1;
-			this.x1 = evt.gesture.center.pageX;
-			this.y1 = evt.gesture.center.pageY;
+			var dx = evt.gesture.deltaX;
+			var dy = evt.gesture.deltaY;
 			evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(this.scale*dx, this.scale*dy);
 		}
 	},
