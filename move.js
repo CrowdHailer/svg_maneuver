@@ -81,14 +81,12 @@ var svgManoeuvre = {
 		}
 	},
 	zoom: function (scale) {
-		console.log(scale);
-		var transMatrix = this.startMatrix;
-		if (scale*transMatrix[0] < 1) { scale = 1 / transMatrix[0]; }
-		for (var i=0; i < transMatrix.length; i++) { transMatrix[i] = this.startMatrix[i]*scale; }
-		transMatrix[4] = this.startMatrix[4] + (1-scale)*this.view[2]/2;
-		transMatrix[5] = this.startMatrix[5] + (1-scale)*this.view[3]/2;
-		this.transMatrix = transMatrix;
-		this.setMatrix(transMatrix);
+		var startMatrix = this.startMatrix;
+		if (scale*startMatrix[0] < 1) { scale = 1 / startMatrix[0]; }
+		for (var i=0; i < 6; i++) { this.transMatrix[i] = startMatrix[i]*scale; }
+		this.transMatrix[4] = this.startMatrix[4] + (1-scale)*this.view[2]/2;
+		this.transMatrix[5] = this.startMatrix[5] + (1-scale)*this.view[3]/2;
+		this.setMatrix(this.transMatrix);
 	},
 	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
