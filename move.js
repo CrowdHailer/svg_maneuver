@@ -11,6 +11,7 @@ var EventUtill = {
 };
 
 var svgManoeuvre = {
+	transMatrix: [1,0,0,1,0,0],
 	init: function (svgId) {
 		transformGroup = document.getElementById(svgId);
 		this.svgElement = document.getElementById('svgDocument');
@@ -18,8 +19,26 @@ var svgManoeuvre = {
 
 		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight", function(evt) {
 			//console.log(evt.type);
+			evt.gesture.preventDefault()
+			switch(evt.type) {
+				case ("touch"):
+					svgManoeuvre.startMove(evt);
+					
+					break;
+				
+				case ("drag"):
+					svgManoeuvre.moveIt(evt);
+					
+					break;
+					
+				case ("release"):
+					svgManoeuvre.endMove(evt);
+					
+					break;
+				
+			}
 		});
-		hammertime.on("touch", function(evt) {
+		/*hammertime.on("touch", function(evt) {
 			svgManoeuvre.startMove(evt);
 		});
 		hammertime.on("drag", function(evt) {
@@ -55,7 +74,7 @@ var svgManoeuvre = {
 				document.addEventListener(mousewheelevt, displaywheel, false);
 		this.transformGroup = transformGroup;
 	},
-	transMatrix: [1,0,0,1,0,0],
+	
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
 	},
