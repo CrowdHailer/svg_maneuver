@@ -92,11 +92,11 @@ var svgManoeuvre = {
 	startMove: function (evt) {
 		this.move = true;
 		this.startMatrix = this.transMatrix.slice(0);
-		var xScale = this.view[2]/this.svgElement.offsetWidth;
-		var yScale = this.view[3]/this.svgElement.offsetHeight;
+		var xScale = this.view[2]/this.svgElement.clientWidth;
+		var yScale = this.view[3]/this.svgElement.clientHeight;
 
 		svgManoeuvre.scale = ((yScale > xScale) ? yScale : xScale);
-		console.log(svgManoeuvre.scale);
+		console.log(this.svgElement.clientWidth);
 	},
 	moveIt: function (evt) {
 		if (this.move) {
