@@ -17,31 +17,40 @@ var svgManoeuvre = {
 		this.svgElement = document.getElementById('svgDocument');
 		this.view = this.getViewbox(this.svgElement);
 
-		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight", function(evt) {
-			evt.gesture.preventDefault()
+		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
+			
 			switch(evt.type) {
 				case ("tap"):
-					alert('tap');
-					
-					break
+					alert('one');
+					break;
 				case ("touch"):
 					svgManoeuvre.startMove(evt);
-					
 					break;
-				
 				case ("drag"):
+					evt.gesture.preventDefault();
 					svgManoeuvre.moveIt(evt);
-					
 					break;
-					
 				case ("release"):
 					svgManoeuvre.endMove(evt);
-					
 					break;
-				
+				case ("hold"):
+					alert('bosh');
+					svgManoeuvre.endMove(evt);
+					break;
+				case ("transform"):
+					svgManoeuvre.zoom(evt.gesture.scale);
+					break;
 			}
 		});
 
+		/*var hammertime = Hammer(transformGroup).on("hold", function(evt) {
+			alert('bosh');
+			svgManoeuvre.endMove(evt); // needed to stop drag which initiated with touch
+		});
+		var hammertime = Hammer(transformGroup).on("transform", function(evt) {
+			svgManoeuvre.scale = evt.gesture.scale/svgManoeuvre.scale //scale relative to touchdown
+			svgManoeuvre.zoom(svgManoeuvre.scale)
+		});*/
 		function displaywheel(e){ 
 				var evt=window.event || e; //equalize event object 
 				var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
@@ -73,11 +82,11 @@ var svgManoeuvre = {
 	},
 	zoom: function (scale) {
 		console.log(scale);
-		var transMatrix = this.transMatrix;
+		var transMatrix = this.startMatrix;
 		if (scale*transMatrix[0] < 1) { scale = 1 / transMatrix[0]; }
-		for (var i=0; i < transMatrix.length; i++) { transMatrix[i] *= scale; }
-		transMatrix[4] += (1-scale)*this.view[2]/2;
-		transMatrix[5] += (1-scale)*this.view[3]/2;
+		for (var i=0; i < transMatrix.length; i++) { transMatrix[i] = this.startMatrix[i]*scale; }
+		transMatrix[4] = this.startMatrix[4] + (1-scale)*this.view[2]/2;
+		transMatrix[5] = this.startMatrix[5] + (1-scale)*this.view[3]/2;
 		this.transMatrix = transMatrix;
 		this.setMatrix(transMatrix);
 	},
