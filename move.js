@@ -19,7 +19,7 @@ var svgManoeuvre = {
 		Hammer(document).on("drag transform", function(evt) {
 			evt.gesture.preventDefault();
 		});
-		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
+		var hammertime = Hammer(transformGroup, {prevent_mouseevents: true}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
 			switch(evt.type) {
 				case ("tap"):
 					alert('one');
@@ -46,21 +46,22 @@ var svgManoeuvre = {
 			}
 		});
 		function displaywheel(e){ 
-				var evt=window.event || e; //equalize event object 
-				var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
-				delta = delta/svgManoeuvre.refactor;
-				console.log(delta);
-				var k = Math.pow(2,delta/720);
-				svgManoeuvre.zoom(k); //delta returns +120 when wheel is scrolled up, -120 when down 
-			} 
+			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix;
+			var evt=window.event || e; //equalize event object 
+			var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
+			delta = delta/svgManoeuvre.refactor;
+			console.log(delta);
+			var k = Math.pow(2,delta/720);
+			svgManoeuvre.zoom(k); //delta returns +120 when wheel is scrolled up, -120 when down 
+		} 
 
-			var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
-			this.refactor=(/Firefox/i.test(navigator.userAgent))? 3 : 1;
-			
-			if (document.attachEvent) //if IE (and Opera depending on user setting) 
-				document.attachEvent("on"+mousewheelevt, displaywheel) ;
-			else if (document.addEventListener) //WC3 browsers 
-				document.addEventListener(mousewheelevt, displaywheel, false);
+		var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
+		this.refactor=(/Firefox/i.test(navigator.userAgent))? 3 : 1;
+		
+		if (document.attachEvent) //if IE (and Opera depending on user setting) 
+			document.attachEvent("on"+mousewheelevt, displaywheel) ;
+		else if (document.addEventListener) //WC3 browsers 
+			document.addEventListener(mousewheelevt, displaywheel, false);
 		this.transformGroup = transformGroup;
 	},
 	
@@ -86,7 +87,6 @@ var svgManoeuvre = {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
 		this.transMatrix[4] = this.startMatrix[4] + dx;
 		this.transMatrix[5] = this.startMatrix[5] + dy;
-		//console.log(dx);
 		this.setMatrix(this.transMatrix);
 	},
 	startMove: function (evt) {
@@ -102,7 +102,6 @@ var svgManoeuvre = {
 		if (this.move) {
 			var dx = evt.gesture.deltaX;
 			var dy = evt.gesture.deltaY;
-			console.log(svgManoeuvre.scale);
 			evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);
 		}
 	},
