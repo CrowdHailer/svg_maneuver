@@ -16,16 +16,23 @@ var svgManoeuvre = {
 		this.svgElement = document.getElementById('svgDocument');
 		this.view = this.getViewbox(this.svgElement);
 
-		var hammertime = Hammer(transformGroup).on("touch", function(evt) {
+		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight", function(evt) {
+			console.log(evt.type);
+		});
+		hammertime.on("touch", function(evt) {
 			svgManoeuvre.startMove(evt);
 			svgManoeuvre.scale = 1;
 		});
-		var hammertime = Hammer(transformGroup).on("drag", function(evt) {
+		hammertime.on("drag", function(evt) {
 			evt.gesture.preventDefault()
 			svgManoeuvre.moveIt(evt);
 		});
 		var hammertime = Hammer(transformGroup).on("release", function(evt) {
 			svgManoeuvre.endMove(evt);
+		});
+		var hammertime = Hammer(transformGroup).on("hold", function(evt) {
+			alert('bosh');
+			svgManoeuvre.endMove(evt); // needed to stop drag which initiated with touch
 		});
 		var hammertime = Hammer(transformGroup).on("transform", function(evt) {
 			svgManoeuvre.scale = evt.gesture.scale/svgManoeuvre.scale //scale relative to touchdown
