@@ -18,9 +18,12 @@ var svgManoeuvre = {
 		this.view = this.getViewbox(this.svgElement);
 
 		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight", function(evt) {
-			//console.log(evt.type);
 			evt.gesture.preventDefault()
 			switch(evt.type) {
+				case ("tap"):
+					alert('tap');
+					
+					break
 				case ("touch"):
 					svgManoeuvre.startMove(evt);
 					
@@ -38,24 +41,7 @@ var svgManoeuvre = {
 				
 			}
 		});
-		/*hammertime.on("touch", function(evt) {
-			svgManoeuvre.startMove(evt);
-		});
-		hammertime.on("drag", function(evt) {
-			evt.gesture.preventDefault()
-			svgManoeuvre.moveIt(evt);
-		});
-		var hammertime = Hammer(transformGroup).on("release", function(evt) {
-			svgManoeuvre.endMove(evt);
-		});
-		var hammertime = Hammer(transformGroup).on("hold", function(evt) {
-			alert('bosh');
-			svgManoeuvre.endMove(evt); // needed to stop drag which initiated with touch
-		});
-		/*var hammertime = Hammer(transformGroup).on("transform", function(evt) {
-			svgManoeuvre.scale = evt.gesture.scale/svgManoeuvre.scale //scale relative to touchdown
-			svgManoeuvre.zoom(svgManoeuvre.scale)
-		});*/
+
 		function displaywheel(e){ 
 				var evt=window.event || e; //equalize event object 
 				var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
