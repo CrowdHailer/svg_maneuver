@@ -16,9 +16,10 @@ var svgManoeuvre = {
 		transformGroup = document.getElementById(svgId);
 		this.svgElement = document.getElementById('svgDocument');
 		this.view = this.getViewbox(this.svgElement);
-
+		Hammer(document).on("drag transform", function(evt) {
+			evt.gesture.preventDefault();
+		});
 		var hammertime = Hammer(transformGroup, {prevent_mouseevents: false}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
-			
 			switch(evt.type) {
 				case ("tap"):
 					alert('one');
@@ -40,6 +41,7 @@ var svgManoeuvre = {
 				case ("transform"):
 					evt.gesture.preventDefault();
 					svgManoeuvre.zoom(evt.gesture.scale);
+					svgManoeuvre.endMove(evt);
 					break;
 			}
 		});
