@@ -38,19 +38,11 @@ var svgManoeuvre = {
 					svgManoeuvre.endMove(evt);
 					break;
 				case ("transform"):
+					evt.gesture.preventDefault();
 					svgManoeuvre.zoom(evt.gesture.scale);
 					break;
 			}
 		});
-
-		/*var hammertime = Hammer(transformGroup).on("hold", function(evt) {
-			alert('bosh');
-			svgManoeuvre.endMove(evt); // needed to stop drag which initiated with touch
-		});
-		var hammertime = Hammer(transformGroup).on("transform", function(evt) {
-			svgManoeuvre.scale = evt.gesture.scale/svgManoeuvre.scale //scale relative to touchdown
-			svgManoeuvre.zoom(svgManoeuvre.scale)
-		});*/
 		function displaywheel(e){ 
 				var evt=window.event || e; //equalize event object 
 				var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
