@@ -19,11 +19,8 @@ var svgManoeuvre = {
 		Hammer(document).on("drag transform", function(evt) {
 			evt.gesture.preventDefault();
 		});
-		var hammertime = Hammer(transformGroup, {prevent_mouseevents: true}).on("touch release tap hold doubletap click mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
+		var hammertime = Hammer(transformGroup, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
 			switch(evt.type) {
-				case ("tap"):
-					alert('one');
-					break;
 				case ("touch"):
 					svgManoeuvre.startMove(evt);
 					break;
@@ -35,13 +32,21 @@ var svgManoeuvre = {
 					svgManoeuvre.endMove(evt);
 					break;
 				case ("hold"):
-					alert('bosh');
+					/*alert('bosh');*/
 					svgManoeuvre.endMove(evt);
+					console.log(svgManoeuvre.getViewboxCoords(evt.gesture.center));
 					break;
+					
 				case ("transform"):
 					evt.gesture.preventDefault();
-					svgManoeuvre.zoomToCoords(evt.gesture.scale, 1000, 500);
+					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
+					svgManoeuvre.zoomToCoords(evt.gesture.scale, zoomAt.x, zoomAt.y);
+					console.log(evt.gesture.center.pageX);
 					svgManoeuvre.endMove(evt);
+					break;
+				case ("doubletap"):
+					alert(evt.gesture.center.x);
+					svgManoeuvre.zoomToCoords(1.25, 0, 0);
 					break;
 			}
 		});
@@ -52,7 +57,9 @@ var svgManoeuvre = {
 			delta = delta/svgManoeuvre.refactor;
 			console.log(delta);
 			var k = Math.pow(2,delta/720);
-			svgManoeuvre.zoomToCoords(k, 500, 500); //delta returns +120 when wheel is scrolled up, -120 when down 
+			
+			var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+			svgManoeuvre.zoomToCoords(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
 		} 
 
 		var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
@@ -67,8 +74,7 @@ var svgManoeuvre = {
 	
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
-	},
-	
+	},	
 	setMatrix: function (updateMatrix) {
 		if (updateMatrix.length === 6) {
 			strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
@@ -77,22 +83,20 @@ var svgManoeuvre = {
 		}
 	},
 	zoomToCoords: function (scale, svgX, svgY) {
-		var startMatrix = this.startMatrix;
-		var newMatrix = [];
-		console.log(startMatrix);
-		j = 7;
+		var newMatrix = this.startMatrix;
 		for (var i=0; i < 6; i++) { 
-			newMatrix[i] = startMatrix[i]*scale;
+			newMatrix[i] *= scale;
 		}
-		newMatrix[4] = newMatrix[4] + (1-scale)*svgX;
-		newMatrix[5] = newMatrix[5] + (1-scale)*svgY;
+		newMatrix[4] += (1-scale)*svgX;
+		newMatrix[5] += (1-scale)*svgY;
 		this.setMatrix(newMatrix);
 	},
 	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
-		this.transMatrix[4] = this.startMatrix[4] + dx;
-		this.transMatrix[5] = this.startMatrix[5] + dy;
-		this.setMatrix(this.transMatrix);
+		var newMatrix = this.startMatrix.slice(0);
+		newMatrix[4] += dx;
+		newMatrix[5] += dy;
+		this.setMatrix(newMatrix);
 	},
 	startMove: function (evt) {
 		this.move = true;
@@ -101,7 +105,6 @@ var svgManoeuvre = {
 		var yScale = this.view[3]/this.svgElement.clientHeight;
 
 		svgManoeuvre.scale = ((yScale > xScale) ? yScale : xScale);
-		console.log(this.svgElement.clientWidth);
 	},
 	moveIt: function (evt) {
 		if (this.move) {
@@ -113,7 +116,16 @@ var svgManoeuvre = {
 	},
 	endMove: function (evt) {
 		this.move = false
-		console.log(this.transMatrix);
+	},
+	getViewboxCoords: function (center) {
+		var point = this.svgElement.createSVGPoint();
+		point.x = center.pageX;
+		point.y = center.pageY;
+		return svgManoeuvre.coordinateTransform(point, svgManoeuvre.svgElement);
+	},
+	coordinateTransform: function(screenPoint, someSvgObject) {
+		var CTM = someSvgObject.getScreenCTM();
+		return screenPoint.matrixTransform( CTM.inverse() );
 	}
 };
 svgManoeuvre.init("manoeuvrable-svg");
