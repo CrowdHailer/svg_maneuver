@@ -40,7 +40,7 @@ var svgManoeuvre = {
 					break;
 				case ("transform"):
 					evt.gesture.preventDefault();
-					svgManoeuvre.zoom(evt.gesture.scale);
+					svgManoeuvre.zoomToCoords(evt.gesture.scale, 1000, 500);
 					svgManoeuvre.endMove(evt);
 					break;
 			}
@@ -52,7 +52,7 @@ var svgManoeuvre = {
 			delta = delta/svgManoeuvre.refactor;
 			console.log(delta);
 			var k = Math.pow(2,delta/720);
-			svgManoeuvre.zoom(k); //delta returns +120 when wheel is scrolled up, -120 when down 
+			svgManoeuvre.zoomToCoords(k, 500, 500); //delta returns +120 when wheel is scrolled up, -120 when down 
 		} 
 
 		var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
@@ -71,17 +71,22 @@ var svgManoeuvre = {
 	
 	setMatrix: function (updateMatrix) {
 		if (updateMatrix.length === 6) {
-		strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
-		this.transformGroup.setAttributeNS(null, "transform", strMatrix);
+			strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
+			this.transformGroup.setAttributeNS(null, "transform", strMatrix);
+			this.transMatrix = updateMatrix.slice(0);
 		}
 	},
-	zoom: function (scale, svgX, svgY) {
+	zoomToCoords: function (scale, svgX, svgY) {
 		var startMatrix = this.startMatrix;
-		if (scale*startMatrix[0] < 1) { scale = 1 / startMatrix[0]; }
-		for (var i=0; i < 6; i++) { this.transMatrix[i] = startMatrix[i]*scale; }
-		this.transMatrix[4] = this.transMatrix[4] + (1-scale)*this.view[2]/2;
-		this.transMatrix[5] = this.transMatrix[5] + (1-scale)*this.view[3]/2;
-		this.setMatrix(this.transMatrix);
+		var newMatrix = [];
+		console.log(startMatrix);
+		j = 7;
+		for (var i=0; i < 6; i++) { 
+			newMatrix[i] = startMatrix[i]*scale;
+		}
+		newMatrix[4] = newMatrix[4] + (1-scale)*svgX;
+		newMatrix[5] = newMatrix[5] + (1-scale)*svgY;
+		this.setMatrix(newMatrix);
 	},
 	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
@@ -102,7 +107,8 @@ var svgManoeuvre = {
 		if (this.move) {
 			var dx = evt.gesture.deltaX;
 			var dy = evt.gesture.deltaY;
-			evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);
+			/*evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);*/
+			this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);
 		}
 	},
 	endMove: function (evt) {
