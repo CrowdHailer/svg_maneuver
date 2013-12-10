@@ -98,6 +98,15 @@ var svgManoeuvre = {
 		newMatrix[5] += (1-scale)*svgY;
 		this.setMatrix(newMatrix);
 	},
+	zoomToCenter: function (scale) {
+		var newMatrix = this.startMatrix.slice(0);
+		for (var i=0; i < 6; i++) { 
+			newMatrix[i] *= scale;
+		}
+		newMatrix[4] += (1-scale)*(this.view[2]/2);
+		newMatrix[5] += (1-scale)*(this.view[3]/2);
+		this.setMatrix(newMatrix);
+	},
 	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
 		var newMatrix = this.startMatrix.slice(0);
