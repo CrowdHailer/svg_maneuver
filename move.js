@@ -83,7 +83,7 @@ var svgManoeuvre = {
 		}
 	},
 	zoomToCoords: function (scale, svgX, svgY) {
-		var newMatrix = this.startMatrix;
+		var newMatrix = this.startMatrix.slice(0);
 		for (var i=0; i < 6; i++) { 
 			newMatrix[i] *= scale;
 		}
