@@ -12,6 +12,7 @@ var EventUtill = {
 
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
+	homeMatrix: [1,0,0,1,0,0],
 	init: function (svgId) {
 		transformGroup = document.getElementById(svgId);
 		this.svgElement = document.getElementById('svgDocument');
@@ -71,7 +72,13 @@ var svgManoeuvre = {
 			document.addEventListener(mousewheelevt, displaywheel, false);
 		this.transformGroup = transformGroup;
 	},
-	
+	goToHomeView: function () {
+		this.setMatrix(this.homeMatrix);
+	},
+	goTo: function (x, y, scale) {
+		newMatrix = [1*scale, 0, 0, 1*scale, (this.view[2]/2)-scale*x, (this.view[3]/2)-scale*y];
+		this.setMatrix(newMatrix);
+	},
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
 	},	

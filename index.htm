@@ -22,8 +22,8 @@
 			position: absolute;
 			top: 40px;
 			left: 40px;
-			width: 80px;
-			height: 80px;
+			width: 90px;
+			height: 100px;
 			background: blue;
 		}
 	</style>
@@ -38,7 +38,12 @@
 		</g>
 	</svg>
 	<div id="floating">
-		
+		<ul>
+			<li id="home-button" onclick="svgManoeuvre.goToHomeView();">home</li>
+			<li id="goTo-button" onclick="svgManoeuvre.goTo(1200, 500, 5);">goTo</li>
+			<li id="pan-button">pan</li>
+			<li id="zoom-button">zoom</li>
+		</ul>
 	</div>
 	<script src="js/hammer.min.js"></script>
 	<script src="js/hammer.fakemultitouch.js"></script>
