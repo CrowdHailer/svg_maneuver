@@ -1,0 +1,274 @@
+html {
+	
+}
+body {
+	margin: 0;
+}
+svg {
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 9px;
+}
+#topbox {
+	width: 8em;
+	text-align: center;
+	padding: 0.2em;
+	border: 0.1em solid white;
+	font-family: tahoma;
+	color: white;
+	font-weight: bold;
+	border-radius: 0.2em
+}
+text {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+text.base {
+	stroke-width: 1.5;
+	stroke: #FFF;
+}
+#suburban-back rect, #tube-back rect {
+	fill: #FFF;
+}
+.zone-odd, tspan.even {
+	fill: #ffffff;
+}
+.zone-even, tspan.odd {
+	fill: #fdf8bd;
+}
+#suburban-zone-boxes rect, #tube-zone-boxes rect {
+	fill: #fff;
+	stroke: #fdf8bd;
+	stroke-width: 2;
+}
+#suburban-zone-numbers text tspan, #tube-zone-numbers text tspan {
+	font-size: 32px;
+	font-weight: bold;
+	stroke: #000;
+	stroke-width: 0.2px;
+}
+#suburban-river path, #tube-river path{
+	stroke: #80b3ff;
+	stroke-width: 22;
+	fill: none;
+}
+#suburban-grouped-stations rect, #tube-grouped-stations rect {
+	stroke: #666666;
+	fill: none;
+	stroke-width: 1;
+}
+#suburban-lines path, #tube-lines path {
+	stroke-width: 3.1px;
+	fill: none;
+}
+.left {
+	text-align: start;
+	text-anchor:start;
+}
+.center{
+	text-align: center;
+	text-anchor:middle;
+}
+.right {
+	text-align: end;
+	text-anchor:end;
+}
+#suburban-names text {
+	fill: #214478;
+	cursor: pointer;
+}
+
+path.tick {
+	stroke-linecap: round;
+}
+
+#suburban-lines path.regional { /*more work*/
+	stroke: #ffffff;
+	stroke-linecap: round;
+	stroke-dasharray: 8,8;
+	stroke-width: 1;
+}
+#suburban-lines path.solid, #tube-lines path.solid{ 
+	stroke: #ffffff;
+	stroke-width: 1;
+}
+path.bakerloo {
+	stroke: #894e24;
+}
+path.central {
+	stroke: #dc241f;
+}
+path.circle {
+	stroke: #ffce00;
+}
+path.district {
+	stroke: #007229;
+}
+path.hammersmith {
+	stroke: #d799af;
+}
+path.jubilee {
+	stroke: #868f98;
+}
+path.metropolitan {
+	stroke: #751056;
+}
+path.northern {
+	stroke: #000000;
+}
+path.piccadilly {
+	stroke: #0019a8;
+}
+path.victoria {
+	stroke: #00a9e2;
+}
+path.waterloo {
+	stroke: #76d0bd;
+}
+path.dlr {
+	stroke: #00afad;
+}
+path.overground {
+	stroke: #e86a10;
+}
+path.airline {
+	stroke: #ff0066;
+}
+path.chiltern {
+	stroke: #9955ff;
+}
+path.coast {
+	stroke: #aa0044;
+}
+path.capital {
+	stroke: #800080;
+}
+path.western {
+	stroke: #0066ff;
+}
+path.anglia {
+	stroke: #454837;
+}
+path.midland {
+	stroke: #abc837;
+}
+path.southern {
+	stroke: #008066;
+}
+path.southeastern {
+	stroke: #2a2aff;
+}
+path.west {
+	stroke: #ff5555;
+}
+path.tramlink {
+	stroke: #00bd19;
+}
+text.chiltern {
+	fill: #9955ff;
+}
+text.coast{
+	fill: #aa0044;
+}
+text.capital {
+	fill: #800080;
+}
+text.western{
+	fill: #0066ff;
+}
+text.anglia {
+	fill: #454837;
+}
+text.midland {
+	fill: #abc837;
+}
+text.southern {
+	fill: #008066;
+}
+text.southeastern {
+	fill: #2a2aff;
+}
+text.west{
+	fill: #ff5555;
+}
+text.tramlink {
+	fill: #00bd19;
+}
+text.airline{
+	fill: #ff0066;
+}
+div.bakerloo {
+	background: #894e24;
+}
+div.central {
+	background: #dc241f;
+}
+div.circle {
+	background: #ffce00;
+}
+div.district {
+	background: #007229;
+}
+div.hammersmith {
+	background: #d799af;
+}
+div.jubilee {
+	background: #868f98;
+}
+div.metropolitan {
+	background: #751056;
+}
+div.northern {
+	background: #000000;
+}
+div.piccadilly {
+	background: #0019a8;
+}
+div.victoria {
+	background: #00a9e2;
+}
+div.waterloo {
+	background: #76d0bd;
+}
+div.dlr {
+	background: #00afad;
+}
+div.overground {
+	background: #e86a10;
+}
+div.airline {
+	background: #ff0066;
+}
+div.chiltern {
+	background: #9955ff;
+}
+div.coast {
+	background: #aa0044;
+}
+div.capital {
+	background: #800080;
+}
+div.western {
+	background: #0066ff;
+}
+div.anglia {
+	background: #454837;
+}
+div.midland {
+	background: #abc837;
+}
+div.southern {
+	background: #008066;
+}
+div.southeastern {
+	background: #2a2aff;
+}
+div.west {
+	background: #ff5555;
+}
+div.tramlink {
+	background: #00bd19;
+}
