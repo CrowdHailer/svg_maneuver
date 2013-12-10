@@ -75,12 +75,12 @@ var svgManoeuvre = {
 		this.transformGroup.setAttributeNS(null, "transform", strMatrix);
 		}
 	},
-	zoom: function (scale) {
+	zoom: function (scale, svgX, svgY) {
 		var startMatrix = this.startMatrix;
 		if (scale*startMatrix[0] < 1) { scale = 1 / startMatrix[0]; }
 		for (var i=0; i < 6; i++) { this.transMatrix[i] = startMatrix[i]*scale; }
-		this.transMatrix[4] = this.startMatrix[4] + (1-scale)*this.view[2]/2;
-		this.transMatrix[5] = this.startMatrix[5] + (1-scale)*this.view[3]/2;
+		this.transMatrix[4] = this.transMatrix[4] + (1-scale)*this.view[2]/2;
+		this.transMatrix[5] = this.transMatrix[5] + (1-scale)*this.view[3]/2;
 		this.setMatrix(this.transMatrix);
 	},
 	pan: function (dx, dy) {
