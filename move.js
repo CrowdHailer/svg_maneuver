@@ -34,19 +34,22 @@ var svgManoeuvre = {
 						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 						svgManoeuvre.dragIt(evt);
 					}
-					console.log(deltaTime);
-					
 					break;
 				case ("dragend"):
 					svgManoeuvre.endDrag(evt);
 					break;
 				case ("transformstart"):
 					svgManoeuvre.startZoom(evt);
+					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					break;
 				case ("transform"):
 					evt.gesture.preventDefault();
-					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-					svgManoeuvre.zoomToCoords(evt.gesture.scale, zoomAt.x, zoomAt.y);
+					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
+					if (deltaTime > 100) {
+						var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
+						svgManoeuvre.zoomToCoords(evt.gesture.scale, zoomAt.x, zoomAt.y);
+						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+					}
 					break;
 				case ("doubletap"):
 					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
