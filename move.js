@@ -21,14 +21,21 @@ var svgManoeuvre = {
 			evt.gesture.preventDefault();
 		});
 		var hammertime = Hammer(transformGroup, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
-			console.log(evt.type);
+			//console.log(evt.type);
 			switch(evt.type) {
 				case ("dragstart"):
 					svgManoeuvre.startDrag(evt);
+					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					break;
 				case ("drag"):
 					evt.gesture.preventDefault();
-					svgManoeuvre.dragIt(evt);
+					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
+					if (deltaTime > 100) {
+						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+						svgManoeuvre.dragIt(evt);
+					}
+					console.log(deltaTime);
+					
 					break;
 				case ("dragend"):
 					svgManoeuvre.endDrag(evt);
