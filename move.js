@@ -13,14 +13,14 @@ var EventUtill = {
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
-	init: function (svgElement, transformGroupId) {
-		transformGroup = document.getElementById(transformGroupId);
-		this.svgElement = document.getElementById(svgElement);
-		this.view = this.getViewbox(this.svgElement);
+	init: function (svgElement) {
+		//transformGroup = document.getElementById(transformGroupId);
+		var svgElement = document.getElementById(svgElement);
+		this.view = this.getViewbox(svgElement);
 		Hammer(document).on("drag transform", function(evt) {
 			evt.gesture.preventDefault();
 		});
-		var hammertime = Hammer(transformGroup, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
+		var hammertime = Hammer(svgElement, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
 			//console.log(evt.type);
 			switch(evt.type) {
 				case ("dragstart"):
@@ -76,7 +76,7 @@ var svgManoeuvre = {
 			document.attachEvent("on"+mousewheelevt, displaywheel) ;
 		else if (document.addEventListener) //WC3 browsers 
 			document.addEventListener(mousewheelevt, displaywheel, false);
-		this.transformGroup = transformGroup;
+		this.svgElement = svgElement;
 	},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
@@ -90,8 +90,10 @@ var svgManoeuvre = {
 	},	
 	setMatrix: function (updateMatrix) {
 		if (updateMatrix.length === 6) {
-			strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
-			this.transformGroup.setAttributeNS(null, "transform", strMatrix);
+			var strMatrix = "matrix(" +  updateMatrix.join(',') + ")";
+			var webkitString = "-webkit-transform: " + strMatrix + ";";
+			//this.svgElement.setAttributeNS(null, "transform", strMatrix);
+			this.svgElement.setAttributeNS(null, "style", webkitString);
 			this.transMatrix = updateMatrix.slice(0);
 		}
 	},
@@ -153,4 +155,4 @@ var svgManoeuvre = {
 		return screenPoint.matrixTransform( CTM.inverse() );
 	}
 };
-svgManoeuvre.init("svgDocument", "manoeuvrable-svg");
+svgManoeuvre.init("manoeuvrable-svg");
