@@ -2,43 +2,11 @@ var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
 	init: function (svgElement) {
-		var svgElement = document.getElementById(svgElement);
-		this.view = this.getViewbox(svgElement);
-		var hammertime = Hammer(svgElement, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
-			switch(evt.type) {
-				case ("dragstart"):
-					svgManoeuvre.startDrag(evt);
-					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					break;
-				case ("drag"):
-					evt.gesture.preventDefault();
-					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
-					if (deltaTime > 100) {
-						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-						svgManoeuvre.dragIt(evt);
-					}
-					break;
-				case ("dragend"):
-					svgManoeuvre.endDrag(evt);
-					break;
-				case ("transformstart"):
-					svgManoeuvre.startZoom(evt);
-					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					break;
-				case ("transform"):
-					evt.gesture.preventDefault();
-					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
-					if (deltaTime > 100) {
-						var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-						svgManoeuvre.zoomToCoords(evt.gesture.scale, zoomAt.x, zoomAt.y);
-						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					}
-					break;
-				case ("doubletap"):
-					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-					svgManoeuvre.zoomToCoords(1.25, zoomAt.x, zoomAt.y);
-					break;
-			}
+		this.svgElement = document.getElementById(svgElement);
+		var hammertime = Hammer(document).on("drag dragstart dragend tap transformstart transformend pinch", this.eventHandler);
+		console.log(this.getOffsetTop());
+	},
+		/*
 		});
 		function displaywheel(e){ 
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix;
@@ -68,9 +36,66 @@ var svgManoeuvre = {
 		newMatrix = [1*scale, 0, 0, 1*scale, (this.view[2]/2)-scale*x, (this.view[3]/2)-scale*y];
 		this.setMatrix(newMatrix);
 	},
-	getViewbox: function (svgElement) {
-		return svgElement.getAttribute('viewBox').split(' ');
-	},	
+*/
+	eventHandler: function (evt) {
+		switch(evt.type) {
+			case ("dragstart"):
+				svgManoeuvre.startDrag(evt);
+				break;
+			case ("drag"):
+				svgManoeuvre.dragIt(evt);
+				break;
+			case ("transformstart"):
+				svgManoeuvre.startPinch(evt);
+				break;
+			case ("pinch"):
+				svgManoeuvre.pinchIt(evt);
+				break;
+			case ("tap"):
+				console.log(evt.gesture.center.pageX, evt.gesture.center.pageY);
+		}
+	},
+	startDrag: function (evt) {
+		this.move = true;
+		this.startMatrix = this.transMatrix.slice(0);
+		svgManoeuvre.scale = svgManoeuvre.getScale();
+	},
+	dragIt: function (evt) {
+		if (this.move) {
+			var dx = evt.gesture.deltaX;
+			var dy = evt.gesture.deltaY;
+			/*evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);*/
+			this.pan(dx, dy, true); //transform outside viewbox do not need to use svg coords
+		}
+	},
+	endDrag: function (evt) {
+		this.move = false
+	},
+	startPinch: function (evt) {
+		this.startMatrix = this.transMatrix.slice(0);
+	},
+	pinchIt: function(evt) {
+		var gesture = evt.gesture;
+		svgManoeuvre.zoom(gesture.scale, gesture.center.pageX, gesture.center.pageY, true);
+	},
+	zoom: function (scale, svgX, svgY, useStartMatrix) {
+		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
+		for (var i=0; i < 6; i++) { 
+			newMatrix[i] *= scale;
+		}
+		console.log(svgX, svgY);
+		newMatrix[4] += (1-scale)*svgX;
+		newMatrix[5] += (1-scale)*svgY;
+		svgManoeuvre.setMatrix(newMatrix);
+	},
+	pan: function (dx, dy, useStartMatrix) {
+		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
+		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
+		newMatrix[4] += dx;
+		newMatrix[5] += dy;
+		svgManoeuvre.setMatrix(newMatrix);
+		console.log('pan ' + dx);
+	},
 	setMatrix: function (updateMatrix) {
 		if (updateMatrix.length === 6) {
 			var strMatrix = "matrix(" +  updateMatrix.join(',') + ")";
@@ -80,62 +105,5 @@ var svgManoeuvre = {
 			this.transMatrix = updateMatrix.slice(0);
 		}
 	},
-	zoomToCoords: function (scale, svgX, svgY) {
-		var newMatrix = this.startMatrix.slice(0);
-		for (var i=0; i < 6; i++) { 
-			newMatrix[i] *= scale;
-		}
-		newMatrix[4] += (1-scale)*svgX;
-		newMatrix[5] += (1-scale)*svgY;
-		this.setMatrix(newMatrix);
-	},
-	zoomToCenter: function (scale) {
-		var newMatrix = this.startMatrix.slice(0);
-		for (var i=0; i < 6; i++) { 
-			newMatrix[i] *= scale;
-		}
-		newMatrix[4] += (1-scale)*(this.view[2]/2);
-		newMatrix[5] += (1-scale)*(this.view[3]/2);
-		this.setMatrix(newMatrix);
-	},
-	startZoom: function (evt) {
-		this.startMatrix = this.transMatrix.slice(0);
-	},
-	pan: function (dx, dy) {
-		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
-		var newMatrix = this.startMatrix.slice(0);
-		newMatrix[4] += dx;
-		newMatrix[5] += dy;
-		this.setMatrix(newMatrix);
-	},
-	startDrag: function (evt) {
-		this.move = true;
-		this.startMatrix = this.transMatrix.slice(0);
-		var xScale = this.view[2]/this.svgElement.clientWidth;
-		var yScale = this.view[3]/this.svgElement.clientHeight;
-
-		svgManoeuvre.scale = ((yScale > xScale) ? yScale : xScale);
-	},
-	dragIt: function (evt) {
-		if (this.move) {
-			var dx = evt.gesture.deltaX;
-			var dy = evt.gesture.deltaY;
-			/*evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);*/
-			this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);
-		}
-	},
-	endDrag: function (evt) {
-		this.move = false
-	},
-	getViewboxCoords: function (center) {
-		var point = this.svgElement.createSVGPoint();
-		point.x = center.pageX;
-		point.y = center.pageY;
-		return svgManoeuvre.coordinateTransform(point, svgManoeuvre.svgElement);
-	},
-	coordinateTransform: function(screenPoint, someSvgObject) {
-		var CTM = someSvgObject.getScreenCTM();
-		return screenPoint.matrixTransform( CTM.inverse() );
-	}
 };
 svgManoeuvre.init("manoeuvrable-svg");
