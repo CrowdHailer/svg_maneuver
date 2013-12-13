@@ -12,9 +12,10 @@
 			overflow: hidden; /*removes scrollbars*/
 			-ms-touch-action: none;
 			-ms-content-zooming: none;
+			background: grey;
 		}
 		svg {
-			background: black;
+			
 			height: 100%; /* Includes to stop Opera and firefox extending offscreen*/
 			width: 100%; /*Necessary to center the svg image area horizontally*/
 		}
@@ -1685,10 +1686,12 @@
 	<div id="floating">
 		
 	</div>
-	<script src="js/hammer.min.js"></script>
-	<script src="js/hammer.fakemultitouch.js"></script>
-	<script src="js/hammer.showtouches.js"></script>
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="js/jquery.panzoom.min.js"></script>
+	<script>
+		
+		$("#svgDocument").panzoom();
 
-	<script src="move.js"></script>
+	</script>
 </body>
 </html>
