@@ -4,10 +4,7 @@ var svgManoeuvre = {
 	init: function (svgElement) {
 		this.svgElement = document.getElementById(svgElement);
 		var hammertime = Hammer(document).on("drag dragstart dragend tap transformstart transformend pinch", this.eventHandler);
-		console.log(this.getOffsetTop());
-	},
-		/*
-		});
+
 		function displaywheel(e){ 
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix;
 			var evt=window.event || e; //equalize event object 
@@ -15,9 +12,10 @@ var svgManoeuvre = {
 			delta = delta/svgManoeuvre.refactor;
 			console.log(delta);
 			var k = Math.pow(2,delta/720);
-			
-			var zoomAt = svgManoeuvre.getViewboxCoords(evt);
-			svgManoeuvre.zoomToCoords(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
+			console.log(evt.pageX, evt.pageY);
+			svgManoeuvre.zoom(k, evt.pageX, evt.pageY, false);
+			//var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+			//svgManoeuvre.zoomToCoords(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
 		} 
 
 		var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
@@ -27,16 +25,16 @@ var svgManoeuvre = {
 			document.attachEvent("on"+mousewheelevt, displaywheel) ;
 		else if (document.addEventListener) //WC3 browsers 
 			document.addEventListener(mousewheelevt, displaywheel, false);
-		this.svgElement = svgElement;
+		
 	},
-	goToHomeView: function () {
+	/*goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
 	},
 	goTo: function (x, y, scale) {
 		newMatrix = [1*scale, 0, 0, 1*scale, (this.view[2]/2)-scale*x, (this.view[3]/2)-scale*y];
 		this.setMatrix(newMatrix);
-	},
-*/
+	},*/
+
 	eventHandler: function (evt) {
 		switch(evt.type) {
 			case ("dragstart"):
@@ -78,14 +76,14 @@ var svgManoeuvre = {
 		var gesture = evt.gesture;
 		svgManoeuvre.zoom(gesture.scale, gesture.center.pageX, gesture.center.pageY, true);
 	},
-	zoom: function (scale, svgX, svgY, useStartMatrix) {
+	zoom: function (scale, centerX, centerY, useStartMatrix) {
 		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
 		for (var i=0; i < 6; i++) { 
 			newMatrix[i] *= scale;
 		}
-		console.log(svgX, svgY);
-		newMatrix[4] += (1-scale)*svgX;
-		newMatrix[5] += (1-scale)*svgY;
+		console.log(centerX, centerY);
+		newMatrix[4] += (1-scale)*centerX/scale;
+		newMatrix[5] += (1-scale)*centerY/scale;
 		svgManoeuvre.setMatrix(newMatrix);
 	},
 	pan: function (dx, dy, useStartMatrix) {
