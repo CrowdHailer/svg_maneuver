@@ -1,27 +1,10 @@
-var EventUtill = {
-	addHandler: function (element, type, handler) {
-		if (element.addEventListener) {
-			element.addEventListener(type, handler, false);
-		} else if (element.attachEvent) {
-			element.attachEvent("on" + type, handler);
-		} else {
-			element["on" + type] = handler;
-		}
-	}
-};
-
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
 	init: function (svgElement) {
-		//transformGroup = document.getElementById(transformGroupId);
 		var svgElement = document.getElementById(svgElement);
 		this.view = this.getViewbox(svgElement);
-		Hammer(document).on("drag transform", function(evt) {
-			evt.gesture.preventDefault();
-		});
 		var hammertime = Hammer(svgElement, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
-			//console.log(evt.type);
 			switch(evt.type) {
 				case ("dragstart"):
 					svgManoeuvre.startDrag(evt);
