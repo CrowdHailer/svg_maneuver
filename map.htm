@@ -24,14 +24,14 @@
 			left: 40px;
 			width: 80px;
 			height: 80px;
-			background: blue;
+			background: yellow;
 		}
 	</style>
 	<link type="text/css" rel="stylesheet" href="map.css" />
 </head>
 <body>
-	<svg id="svgDocument" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2000 1000">
-		<g id="manoeuvrable-svg">
+	<svg id="manoeuvrable-svg" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2240 1500">
+		<g >
 			
 				<g id="suburban-back">
 					<rect height="1542" width="2240" x="0" y="32" />
@@ -1690,5 +1690,9 @@
 	<script src="js/hammer.showtouches.js"></script>
 
 	<script src="move.js"></script>
+	<script>
+		Hammer.plugins.fakeMultitouch();
+		Hammer.plugins.showTouches();
+	</script>
 </body>
 </html>
