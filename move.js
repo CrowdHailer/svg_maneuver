@@ -26,7 +26,6 @@ var svgManoeuvre = {
 	init: function (svgElement, transformGroupId) {
 		transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		this.view = this.getViewbox(this.svgElement);
 		Hammer(document).on("drag transform", function(evt) {
 			evt.gesture.preventDefault();
 		});
@@ -79,16 +78,11 @@ var svgManoeuvre = {
 		this.setMatrix(this.homeMatrix);
 	},
 	goTo: function (x, y, scale) {
-		newMatrix = [1*scale, 0, 0, 1*scale, (this.view[2]/2)-scale*x, (this.view[3]/2)-scale*y];
-		this.setMatrix(newMatrix);
+		this.setMatrix(svgManoeuvre.zoomMatrix([1,0,0,1,0,0], scale, x, y));
 	},
-	getViewbox: function (svgElement) {
-		return svgElement.getAttribute('viewBox').split(' ');
-	},	
 	startZoom: function (evt) {
 		this.startMatrix = this.transMatrix.slice(0);
 	},
-	
 	startDrag: function (evt) {
 		this.startMatrix = this.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
@@ -111,19 +105,14 @@ var svgManoeuvre = {
 	},
 	zoom: function (scale, svgX, svgY, useStartMatrix) {
 		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
-		for (var i=0; i < 6; i++) { 
-			newMatrix[i] *= scale;
-		}
-		newMatrix[4] += (1-scale)*svgX;
-		newMatrix[5] += (1-scale)*svgY;
-		this.setMatrix(newMatrix);
+		this.setMatrix(svgManoeuvre.zoomMatrix(newMatrix, scale, svgX, svgY));
 	},
-	zoomMatrix: function (matrix, scale, svgX, svgY) {
+	zoomMatrix: function (matrix, scale, X, Y) {
 		for (var i=0; i < 6; i++) { 
 			matrix[i] *= scale;
 		}
-		matrix[4] += (1-scale)*svgX;
-		matrix[5] += (1-scale)*svgY;
+		matrix[4] += (1-scale)*X;
+		matrix[5] += (1-scale)*Y;
 		return matrix;
 	},
 	getViewboxCoords: function (center) {
@@ -138,6 +127,9 @@ var svgManoeuvre = {
 	},
 	getScale: function () {
 		return this.svgElement.getScreenCTM().inverse().a;
+	},
+	getViewbox: function (svgElement) {
+		return svgElement.getAttribute('viewBox').split(' ');
 	},
 	setMatrix: function (updateMatrix) {
 	//Sets transform matrix of group denoted as transform group
