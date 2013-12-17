@@ -44,7 +44,6 @@ var svgManoeuvre = {
 				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				break;
 			case ("drag"):
-				evt.gesture.preventDefault();
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 				if (deltaTime > 100) {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
@@ -56,7 +55,6 @@ var svgManoeuvre = {
 				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				break;
 			case ("transform"):
-				evt.gesture.preventDefault();
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 				if (deltaTime > 100) {
 					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
