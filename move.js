@@ -1,11 +1,21 @@
-var EventUtill = {
+var EventUtil = {
 	addHandler: function (element, type, handler) {
 		if (element.addEventListener) {
-			element.addEventListener(type, handler, false);
+				element.addEventListener(type, handler, false);
 		} else if (element.attachEvent) {
-			element.attachEvent("on" + type, handler);
+				element.attachEvent("on" + type, handler);
 		} else {
-			element["on" + type] = handler;
+				element["on" + type] = handler;
+		}
+	},
+	getEvent: function(event) {
+		return event ? event : window.event;
+	},
+	getWheelDelta: function (event) {
+		if (event.wheelDelta) {
+			return event.wheelDelta;
+		} else {
+			return -event.detail * 40;
 		}
 	}
 };
@@ -35,9 +45,6 @@ var svgManoeuvre = {
 						svgManoeuvre.dragIt(evt);
 					}
 					break;
-				case ("dragend"):
-					svgManoeuvre.endDrag(evt);
-					break;
 				case ("transformstart"):
 					svgManoeuvre.startZoom(evt);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
@@ -47,16 +54,19 @@ var svgManoeuvre = {
 					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 					if (deltaTime > 100) {
 						var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-						svgManoeuvre.zoomToCoords(evt.gesture.scale, zoomAt.x, zoomAt.y);
+						svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y);
 						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					}
 					break;
 				case ("doubletap"):
 					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-					svgManoeuvre.zoomToCoords(1.25, zoomAt.x, zoomAt.y);
+					svgManoeuvre.zoom(1.25, zoomAt.x, zoomAt.y);
 					break;
 			}
 		});
+		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
+		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
+		/*
 		function displaywheel(e){ 
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix;
 			var evt=window.event || e; //equalize event object 
@@ -66,7 +76,7 @@ var svgManoeuvre = {
 			var k = Math.pow(2,delta/720);
 			
 			var zoomAt = svgManoeuvre.getViewboxCoords(evt);
-			svgManoeuvre.zoomToCoords(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
+			svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
 		} 
 
 		var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
@@ -76,7 +86,15 @@ var svgManoeuvre = {
 			document.attachEvent("on"+mousewheelevt, displaywheel) ;
 		else if (document.addEventListener) //WC3 browsers 
 			document.addEventListener(mousewheelevt, displaywheel, false);
+		*/
 		this.transformGroup = transformGroup;
+	},
+	handleMouseWheel: function (evt) {
+		evt = window.EventUtil.getEvent(evt);
+		var delta = window.EventUtil.getWheelDelta(evt);
+		var k = Math.pow(2,delta/720);
+		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y);
 	},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
@@ -88,14 +106,33 @@ var svgManoeuvre = {
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
 	},	
-	setMatrix: function (updateMatrix) {
-		if (updateMatrix.length === 6) {
-			strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
-			this.transformGroup.setAttributeNS(null, "transform", strMatrix);
-			this.transMatrix = updateMatrix.slice(0);
-		}
+	
+
+	startZoom: function (evt) {
+		this.startMatrix = this.transMatrix.slice(0);
 	},
-	zoomToCoords: function (scale, svgX, svgY) {
+	
+	startDrag: function (evt) {
+		this.startMatrix = this.transMatrix.slice(0);
+		svgManoeuvre.scale = svgManoeuvre.getScale();
+	},
+	dragIt: function (evt) {
+		var dx = evt.gesture.deltaX;
+		var dy = evt.gesture.deltaY;
+		var scale = svgManoeuvre.scale;
+		this.pan(scale*dx, scale*dy);
+	},
+	pan: function (dx, dy) {
+		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
+		var newMatrix = this.startMatrix.slice(0);
+		this.setMatrix(svgManoeuvre.panMatrix(newMatrix, dx, dy));
+	},
+	panMatrix: function (matrix, dx, dy) {
+		matrix[4] += dx;
+		matrix[5] += dy;
+		return matrix;
+	},
+	zoom: function (scale, svgX, svgY) {
 		var newMatrix = this.startMatrix.slice(0);
 		for (var i=0; i < 6; i++) { 
 			newMatrix[i] *= scale;
@@ -104,43 +141,13 @@ var svgManoeuvre = {
 		newMatrix[5] += (1-scale)*svgY;
 		this.setMatrix(newMatrix);
 	},
-	zoomToCenter: function (scale) {
-		var newMatrix = this.startMatrix.slice(0);
+	zoomMatrix: function (matrix, scale, svgX, svgY) {
 		for (var i=0; i < 6; i++) { 
-			newMatrix[i] *= scale;
+			matrix[i] *= scale;
 		}
-		newMatrix[4] += (1-scale)*(this.view[2]/2);
-		newMatrix[5] += (1-scale)*(this.view[3]/2);
-		this.setMatrix(newMatrix);
-	},
-	startZoom: function (evt) {
-		this.startMatrix = this.transMatrix.slice(0);
-	},
-	pan: function (dx, dy) {
-		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
-		var newMatrix = this.startMatrix.slice(0);
-		newMatrix[4] += dx;
-		newMatrix[5] += dy;
-		this.setMatrix(newMatrix);
-	},
-	startDrag: function (evt) {
-		this.move = true;
-		this.startMatrix = this.transMatrix.slice(0);
-		var xScale = this.view[2]/this.svgElement.clientWidth;
-		var yScale = this.view[3]/this.svgElement.clientHeight;
-
-		svgManoeuvre.scale = ((yScale > xScale) ? yScale : xScale);
-	},
-	dragIt: function (evt) {
-		if (this.move) {
-			var dx = evt.gesture.deltaX;
-			var dy = evt.gesture.deltaY;
-			/*evt.ctrlKey ? this.zoom(Math.pow(2,-dy/100)) : this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);*/
-			this.pan(svgManoeuvre.scale*dx, svgManoeuvre.scale*dy);
-		}
-	},
-	endDrag: function (evt) {
-		this.move = false
+		matrix[4] += (1-scale)*svgX;
+		matrix[5] += (1-scale)*svgY;
+		return matrix;
 	},
 	getViewboxCoords: function (center) {
 		var point = this.svgElement.createSVGPoint();
@@ -151,6 +158,18 @@ var svgManoeuvre = {
 	coordinateTransform: function(screenPoint, someSvgObject) {
 		var CTM = someSvgObject.getScreenCTM();
 		return screenPoint.matrixTransform( CTM.inverse() );
+	},
+	getScale: function () {
+		return this.svgElement.getScreenCTM().inverse().a;
+	},
+	setMatrix: function (updateMatrix) {
+	//Sets transform matrix of group denoted as transform group
+		if (updateMatrix.length === 6) {
+			strMatrix = "matrix(" +  updateMatrix.join(' ') + ")";
+			this.transformGroup.setAttributeNS(null, "transform", strMatrix);
+			this.transMatrix = updateMatrix.slice(0); //Slice to keep transMatrix as copy
+		}
 	}
+	
 };
 svgManoeuvre.init("svgDocument", "manoeuvrable-svg");
