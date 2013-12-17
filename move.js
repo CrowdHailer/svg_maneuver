@@ -54,39 +54,18 @@ var svgManoeuvre = {
 					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 					if (deltaTime > 100) {
 						var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-						svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y);
+						svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y, true);
 						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					}
 					break;
 				case ("doubletap"):
 					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-					svgManoeuvre.zoom(1.25, zoomAt.x, zoomAt.y);
+					svgManoeuvre.zoom(1.25, zoomAt.x, zoomAt.y, false);
 					break;
 			}
 		});
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
-		/*
-		function displaywheel(e){ 
-			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix;
-			var evt=window.event || e; //equalize event object 
-			var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
-			delta = delta/svgManoeuvre.refactor;
-			console.log(delta);
-			var k = Math.pow(2,delta/720);
-			
-			var zoomAt = svgManoeuvre.getViewboxCoords(evt);
-			svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
-		} 
-
-		var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x 
-		this.refactor=(/Firefox/i.test(navigator.userAgent))? 3 : 1;
-		
-		if (document.attachEvent) //if IE (and Opera depending on user setting) 
-			document.attachEvent("on"+mousewheelevt, displaywheel) ;
-		else if (document.addEventListener) //WC3 browsers 
-			document.addEventListener(mousewheelevt, displaywheel, false);
-		*/
 		this.transformGroup = transformGroup;
 	},
 	handleMouseWheel: function (evt) {
@@ -94,7 +73,7 @@ var svgManoeuvre = {
 		var delta = window.EventUtil.getWheelDelta(evt);
 		var k = Math.pow(2,delta/720);
 		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
-		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y);
+		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y, false);
 	},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
@@ -106,8 +85,6 @@ var svgManoeuvre = {
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
 	},	
-	
-
 	startZoom: function (evt) {
 		this.startMatrix = this.transMatrix.slice(0);
 	},
@@ -120,11 +97,11 @@ var svgManoeuvre = {
 		var dx = evt.gesture.deltaX;
 		var dy = evt.gesture.deltaY;
 		var scale = svgManoeuvre.scale;
-		this.pan(scale*dx, scale*dy);
+		this.pan(scale*dx, scale*dy, true);
 	},
-	pan: function (dx, dy) {
+	pan: function (dx, dy, useStartMatrix) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
-		var newMatrix = this.startMatrix.slice(0);
+		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
 		this.setMatrix(svgManoeuvre.panMatrix(newMatrix, dx, dy));
 	},
 	panMatrix: function (matrix, dx, dy) {
@@ -132,8 +109,8 @@ var svgManoeuvre = {
 		matrix[5] += dy;
 		return matrix;
 	},
-	zoom: function (scale, svgX, svgY) {
-		var newMatrix = this.startMatrix.slice(0);
+	zoom: function (scale, svgX, svgY, useStartMatrix) {
+		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
 		for (var i=0; i < 6; i++) { 
 			newMatrix[i] *= scale;
 		}
