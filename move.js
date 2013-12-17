@@ -10,10 +10,8 @@ var svgManoeuvre = {
 			var evt=window.event || e; //equalize event object 
 			var delta=evt.detail? evt.detail*(-120) : evt.wheelDelta; //check for detail first so Opera uses that instead of wheelDelta 
 			delta = delta/svgManoeuvre.refactor;
-			console.log(delta);
 			var k = Math.pow(2,delta/720);
-			console.log(evt.pageX, evt.pageY);
-			svgManoeuvre.zoom(k, evt.pageX, evt.pageY, false);
+			svgManoeuvre.zoom(k, evt.clientX, evt.clientY, false);
 			//var zoomAt = svgManoeuvre.getViewboxCoords(evt);
 			//svgManoeuvre.zoomToCoords(k, zoomAt.x, zoomAt.y); //delta returns +120 when wheel is scrolled up, -120 when down 
 		} 
@@ -56,7 +54,6 @@ var svgManoeuvre = {
 	startDrag: function (evt) {
 		this.move = true;
 		this.startMatrix = this.transMatrix.slice(0);
-		svgManoeuvre.scale = svgManoeuvre.getScale();
 	},
 	dragIt: function (evt) {
 		if (this.move) {
@@ -74,6 +71,7 @@ var svgManoeuvre = {
 	},
 	pinchIt: function(evt) {
 		var gesture = evt.gesture;
+		//console.log(Object.keys(gesture.center));
 		svgManoeuvre.zoom(gesture.scale, gesture.center.pageX, gesture.center.pageY, true);
 	},
 	zoom: function (scale, centerX, centerY, useStartMatrix) {
@@ -81,18 +79,19 @@ var svgManoeuvre = {
 		for (var i=0; i < 6; i++) { 
 			newMatrix[i] *= scale;
 		}
-		console.log(centerX, centerY);
-		newMatrix[4] += (1-scale)*centerX/scale;
-		newMatrix[5] += (1-scale)*centerY/scale;
+		newMatrix[4] += (1-scale)*centerX;
+		newMatrix[5] += (1-scale)*centerY;
 		svgManoeuvre.setMatrix(newMatrix);
 	},
 	pan: function (dx, dy, useStartMatrix) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
 		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
-		newMatrix[4] += dx;
-		newMatrix[5] += dy;
-		svgManoeuvre.setMatrix(newMatrix);
-		console.log('pan ' + dx);
+		svgManoeuvre.setMatrix(svgManoeuvre.panMatrix(newMatrix, dx, dy));
+	},
+	panMatrix: function (matrix, dx, dy) {
+		matrix[4] += dx;
+		matrix[5] += dy;
+		return matrix;
 	},
 	setMatrix: function (updateMatrix) {
 		if (updateMatrix.length === 6) {
