@@ -23,49 +23,52 @@ var EventUtil = {
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
+	// Need to add max zooms max pans etc
 	init: function (svgElement, transformGroupId) {
 		transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		Hammer(document).on("drag transform", function(evt) {
-			evt.gesture.preventDefault();
-		});
-		var hammertime = Hammer(transformGroup, {prevent_mouseevents: true}).on("touch release tap hold doubletap click dblclick mousedown drag dragstart dragend dragup dragdown dragleft dragright swipe swipeup swipedown swipeleft swiperight transform transformstart transformend", function(evt) {
-			//console.log(evt.type);
-			switch(evt.type) {
-				case ("dragstart"):
-					svgManoeuvre.startDrag(evt);
-					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					break;
-				case ("drag"):
-					evt.gesture.preventDefault();
-					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
-					if (deltaTime > 100) {
-						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-						svgManoeuvre.dragIt(evt);
-					}
-					break;
-				case ("transformstart"):
-					svgManoeuvre.startZoom(evt);
-					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					break;
-				case ("transform"):
-					evt.gesture.preventDefault();
-					var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
-					if (deltaTime > 100) {
-						var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-						svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y, true);
-						svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					}
-					break;
-				case ("doubletap"):
-					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-					svgManoeuvre.zoom(1.25, zoomAt.x, zoomAt.y, false);
-					break;
-			}
-		});
+		var hammertime = Hammer(document).on("drag dragstart doubletap transformstart transformend pinch", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 		this.transformGroup = transformGroup;
+	},
+	gestureHandler: function (evt) {
+		try {
+			evt.gesture.preventDefault();
+		} catch (error) {
+			console.log(error);
+		}
+		switch (evt.type) {
+			case ("dragstart"):
+				svgManoeuvre.startDrag(evt);
+				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+				break;
+			case ("drag"):
+				evt.gesture.preventDefault();
+				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
+				if (deltaTime > 100) {
+					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+					svgManoeuvre.dragIt(evt);
+				}
+				break;
+			case ("transformstart"):
+				svgManoeuvre.startZoom(evt);
+				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+				break;
+			case ("transform"):
+				evt.gesture.preventDefault();
+				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
+				if (deltaTime > 100) {
+					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
+					svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y, true);
+					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+				}
+				break;
+			case ("doubletap"):
+				var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
+				svgManoeuvre.zoom(2, zoomAt.x, zoomAt.y, false);
+				break;
+		}
 	},
 	handleMouseWheel: function (evt) {
 		evt = window.EventUtil.getEvent(evt);
