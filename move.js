@@ -55,7 +55,7 @@ var svgManoeuvre = {
 				svgManoeuvre.startZoom(evt);
 				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				break;
-			case ("transform"):
+			case ("pinch"):
 				evt.gesture.preventDefault();
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 				if (deltaTime > 100) {
