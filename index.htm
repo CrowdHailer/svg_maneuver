@@ -4,20 +4,10 @@
 	<meta charset="UTF-8">
 	<title>navigable view box</title>
 	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	<link rel="stylesheet" href="maneuver.css">
+	
 	<style>
-		body, html {
-			height: 100%; /* Required to make div fill to screen height, otherwise IE picks smaller image height */
-			margin: 0; 
-			padding: 0; /* Remove standard behaviour for body margin */
-			overflow: hidden; /*removes scrollbars*/
-			-ms-touch-action: none;
-			-ms-content-zooming: none;
-		}
-		svg {
-			background: red;
-			height: 100%; /* Includes to stop Opera and firefox extending offscreen*/
-			width: 100%; /*Necessary to center the svg image area horizontally*/
-		}
+
 		#floating {
 			position: absolute;
 			top: 40px;
