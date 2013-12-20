@@ -2,6 +2,8 @@ var svgManoeuvre = {
 	init: function (svgElement) {
 		this.svgElement = document.getElementById(svgElement);
 		var hammertime = Hammer(document).on("drag dragstart dragend tap transformstart transformend pinch", this.eventHandler);
+		svgManoeuvre.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
+		svgManoeuvre.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 	},
 	MAX_VIEWBOX_WIDTH: 2000,
 	eventHandler: function (evt) {
@@ -26,6 +28,14 @@ var svgManoeuvre = {
 				/*console.log(evt.gesture.center.pageX, evt.gesture.center.pageY);
 				console.log(svgManoeuvre.getViewboxCoords(evt.gesture.center));*/
 		}
+	},
+	handleMouseWheel: function (evt) {
+		evt = svgManoeuvre.EventUtil.getEvent(evt);
+		var delta = svgManoeuvre.EventUtil.getWheelDelta(evt);
+		var k = Math.pow(2,delta/720);
+		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+		svgManoeuvre.startViewbox = svgManoeuvre.getViewbox();
+		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y);
 	},
 	startDrag: function (evt) {
 		svgManoeuvre.startViewbox = svgManoeuvre.getViewbox();
@@ -90,6 +100,27 @@ var svgManoeuvre = {
 			node = node.parentNode;
 			}
 		return false;
+	},
+	EventUtil: {
+		addHandler: function (element, type, handler) {
+			if (element.addEventListener) {
+				element.addEventListener(type, handler, false);
+			} else if (element.attachEvent) {
+				element.attachEvent("on" + type, handler);
+			} else {
+				element["on" + type] = handler;
+			}
+		},
+		getEvent: function(event) {
+			return event ? event : window.event;
+		},
+		getWheelDelta: function (event) {
+			if (event.wheelDelta) {
+				return event.wheelDelta;
+			} else {
+				return -event.detail * 40;
+			}
+		}
 	}
 	
 };
