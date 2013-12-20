@@ -10,9 +10,8 @@ var svgManoeuvre = {
 		//console.log(evt.target);
 		switch(evt.type) {
 			case ("dragstart"):
-				var target = (svgManoeuvre.isDescendant(svgManoeuvre.svgElement,evt.target)) ? "SVG": "other";
+				var target = (svgManoeuvre.isEventOnSvg(evt)) ? "SVG": "other";
 				console.log(target);
-				console.log(evt.type);
 				svgManoeuvre.startDrag(evt);
 				break;
 			case ("drag"):
@@ -30,6 +29,8 @@ var svgManoeuvre = {
 		}
 	},
 	handleMouseWheel: function (evt) {
+		var target = (svgManoeuvre.isEventOnSvg(evt)) ? "SVG": "other";
+		console.log(target);
 		evt = svgManoeuvre.EventUtil.getEvent(evt);
 		svgManoeuvre.scrollIt(evt);
 	},
@@ -103,6 +104,9 @@ var svgManoeuvre = {
 			node = node.parentNode;
 			}
 		return false;
+	},
+	isEventOnSvg: function (evt) {
+		return svgManoeuvre.isDescendant(svgManoeuvre.svgElement,evt.target);
 	},
 	EventUtil: {
 		addHandler: function (element, type, handler) {
