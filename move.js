@@ -31,11 +31,7 @@ var svgManoeuvre = {
 	},
 	handleMouseWheel: function (evt) {
 		evt = svgManoeuvre.EventUtil.getEvent(evt);
-		var delta = svgManoeuvre.EventUtil.getWheelDelta(evt);
-		var k = Math.pow(2,delta/720);
-		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
-		svgManoeuvre.startViewbox = svgManoeuvre.getViewbox();
-		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y);
+		svgManoeuvre.scrollIt(evt);
 	},
 	startDrag: function (evt) {
 		svgManoeuvre.startViewbox = svgManoeuvre.getViewbox();
@@ -54,6 +50,13 @@ var svgManoeuvre = {
 		var gesture = evt.gesture;
 		var zoomAt = svgManoeuvre.getViewboxCoords(gesture.center);
 		svgManoeuvre.zoom(gesture.scale, zoomAt.x, zoomAt.y);
+	},
+	scrollIt: function (evt) {
+		var delta = svgManoeuvre.EventUtil.getWheelDelta(evt);
+		var k = Math.pow(2,delta/720);
+		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+		svgManoeuvre.startViewbox = svgManoeuvre.getViewbox();
+		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y);
 	},
 	zoom: function (scale, svgX, svgY) {
 		var newView = svgManoeuvre.startViewbox.slice(0);
