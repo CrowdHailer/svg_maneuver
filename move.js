@@ -6,7 +6,6 @@ var svgManoeuvre = {
 	MAX_VIEWBOX_WIDTH: 2000,
 	eventHandler: function (evt) {
 		//console.log(evt.target);
-		
 		switch(evt.type) {
 			case ("dragstart"):
 				var target = (svgManoeuvre.isDescendant(svgManoeuvre.svgElement,evt.target)) ? "SVG": "other";
@@ -27,16 +26,6 @@ var svgManoeuvre = {
 				/*console.log(evt.gesture.center.pageX, evt.gesture.center.pageY);
 				console.log(svgManoeuvre.getViewboxCoords(evt.gesture.center));*/
 		}
-	},
-	isDescendant: function (parent, child) {
-		var node = child.parentNode;
-		while (node != null) {
-			if (node == parent) {
-				return true;
-			}
-			node = node.parentNode;
-			}
-		return false;
 	},
 	startDrag: function (evt) {
 		svgManoeuvre.startViewbox = svgManoeuvre.getViewbox();
@@ -91,6 +80,16 @@ var svgManoeuvre = {
 	},
 	getScale: function () {
 		return this.svgElement.getScreenCTM().inverse().a;
+	},
+		isDescendant: function (parent, child) {
+		var node = child.parentNode;
+		while (node != null) {
+			if (node == parent) {
+				return true;
+			}
+			node = node.parentNode;
+			}
+		return false;
 	}
 	
 };
