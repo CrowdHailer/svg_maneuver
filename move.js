@@ -27,7 +27,7 @@ var svgManoeuvre = {
 	MIN_EVENT_DELAY: 120, // time in ms limits rerendering of screen
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
-	isTarget: false,
+	svgMove: false,
 	//set viewbox to whole area
 	//set home transform to initial area
 	// Need to add max zooms max pans etc
@@ -46,13 +46,13 @@ var svgManoeuvre = {
 		}
 		switch (evt.type) {
 			case ("drag"):
-				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.isTarget)) {
+				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					svgManoeuvre.dragIt(evt);
 				}
 				break;
 			case ("pinch"):
-				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.isTarget)) {
+				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
 					svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
@@ -64,7 +64,7 @@ var svgManoeuvre = {
 			case ("transformend"):
 			case ("dragend"):
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-				svgManoeuvre.isTarget = false;
+				svgManoeuvre.svgMove = false;
 				break;
 			case ("doubletap"):
 				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
@@ -96,7 +96,7 @@ var svgManoeuvre = {
 		this.startMatrix = this.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
 		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-		svgManoeuvre.isTarget = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)
+		svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)
 	},
 	dragIt: function (evt) {
 		var dx = evt.gesture.deltaX;

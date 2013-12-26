@@ -1,3 +1,4 @@
 svgManoeuvre.holdHandler = function (evt) {
-	console.log(evt.gesture.center.pageX);
+	svgManoeuvre.svgMove = false
+	console.log(evt.target.innerHTML)
 }
