@@ -23,6 +23,7 @@ var EventUtil = {
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
+	startMatrix: [1,0,0,1,0,0],
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
 	//set viewbox to whole area
@@ -52,8 +53,7 @@ var svgManoeuvre = {
 			case ("pinch"):
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 				if (deltaTime > 100) {
-					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-					svgManoeuvre.zoomSVG(evt.gesture.scale, zoomAt.x, zoomAt.y, true);
+					svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
 				break;
@@ -61,9 +61,12 @@ var svgManoeuvre = {
 			case ("dragstart"):
 				svgManoeuvre.startMove(evt);
 				break;
+			case ("transformend"):
+				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+				break;
 			case ("doubletap"):
-				var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
-				svgManoeuvre.zoomSVG(2, zoomAt.x, zoomAt.y, false);
+				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
+				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 				break;
 		}
 	},
@@ -71,13 +74,9 @@ var svgManoeuvre = {
 		evt = window.EventUtil.getEvent(evt);
 		var delta = window.EventUtil.getWheelDelta(evt);
 		var k = Math.pow(2,delta/720);
-		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
-		
-		var currentZoom = svgManoeuvre.transMatrix[0]
-		k = (currentZoom*k <= svgManoeuvre.MAX_ZOOM) ? k : svgManoeuvre.MAX_ZOOM/currentZoom;
-		k = (currentZoom*k >= svgManoeuvre.MIN_ZOOM) ? k : svgManoeuvre.MIN_ZOOM/currentZoom;
-		console.log(k);
-		svgManoeuvre.zoomSVG(k, zoomAt.x, zoomAt.y, false);
+
+		svgManoeuvre.zoomPage(k, evt.pageX, evt.pageY);
+		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 	},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
@@ -106,8 +105,18 @@ var svgManoeuvre = {
 		matrix[5] += dy;
 		return matrix;
 	},
-	zoomSVG: function (scale, svgX, svgY, useStartMatrix) {
-		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
+	zoomPage: function (scale, pageX, pageY) {
+		var currentZoom = svgManoeuvre.transMatrix[0]
+		scale = (currentZoom*scale <= svgManoeuvre.MAX_ZOOM) ? scale : 1;//svgManoeuvre.MAX_ZOOM/currentZoom;
+		scale = (currentZoom*scale >= svgManoeuvre.MIN_ZOOM) ? scale : 1;//svgManoeuvre.MIN_ZOOM/currentZoom;
+		if (scale != 1) {
+			var zoomAt = svgManoeuvre.getViewboxCoords(pageX, pageY);
+			svgManoeuvre.zoomSVG(scale, zoomAt.x, zoomAt.y);
+		}
+		
+	},
+	zoomSVG: function (scale, svgX, svgY) {
+		var newMatrix = this.startMatrix.slice(0);
 		this.setMatrix(svgManoeuvre.zoomMatrix(newMatrix, scale, svgX, svgY));
 	},
 	zoomMatrix: function (matrix, scale, X, Y) {
@@ -118,10 +127,10 @@ var svgManoeuvre = {
 		matrix[5] += (1-scale)*Y;
 		return matrix;
 	},
-	getViewboxCoords: function (center) {
+	getViewboxCoords: function (pageX, pageY) {
 		var point = this.svgElement.createSVGPoint();
-		point.x = center.pageX;
-		point.y = center.pageY;
+		point.x = pageX;
+		point.y = pageY;
 		return svgManoeuvre.coordinateTransform(point, svgManoeuvre.svgElement);
 	},
 	coordinateTransform: function(screenPoint, someSvgObject) {

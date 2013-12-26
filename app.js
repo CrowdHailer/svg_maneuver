@@ -1,4 +1,4 @@
 Hammer.plugins.fakeMultitouch();
-Hammer.plugins.showTouches();
+//Hammer.plugins.showTouches();
 
 svgManoeuvre.init("svgDocument", "manoeuvrable-svg");
