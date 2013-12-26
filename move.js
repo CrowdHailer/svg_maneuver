@@ -38,18 +38,12 @@ var svgManoeuvre = {
 			console.log(error);
 		}
 		switch (evt.type) {
-			case ("dragstart"):
-				svgManoeuvre.startMove(evt);
-				break;
 			case ("drag"):
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 				if (deltaTime > 100) {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					svgManoeuvre.dragIt(evt);
 				}
-				break;
-			case ("transformstart"):
-				svgManoeuvre.startMove(evt);
 				break;
 			case ("pinch"):
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
@@ -58,6 +52,10 @@ var svgManoeuvre = {
 					svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y, true);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
+				break;
+			case ("transformstart"):
+			case ("dragstart"):
+				svgManoeuvre.startMove(evt);
 				break;
 			case ("doubletap"):
 				var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
