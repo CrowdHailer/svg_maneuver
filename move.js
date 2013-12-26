@@ -24,6 +24,7 @@ var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
 	startMatrix: [1,0,0,1,0,0],
+	MIN_EVENT_DELAY: 100, // time in ms limits rerendering of screen
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
 	//set viewbox to whole area
@@ -44,15 +45,13 @@ var svgManoeuvre = {
 		}
 		switch (evt.type) {
 			case ("drag"):
-				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
-				if (deltaTime > 100) {
+				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY) {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					svgManoeuvre.dragIt(evt);
 				}
 				break;
 			case ("pinch"):
-				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
-				if (deltaTime > 100) {
+				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY) {
 					svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
