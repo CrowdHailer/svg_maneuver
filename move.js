@@ -54,12 +54,14 @@ var svgManoeuvre = {
 			case ("pinch"):
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
 				if (deltaTime > 100) {
-					svgManoeuvre.zoom(evt.gesture.scale, evt.gesture.center, true);
+					var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
+					svgManoeuvre.zoom(evt.gesture.scale, zoomAt.x, zoomAt.y, true);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
 				break;
 			case ("doubletap"):
-				svgManoeuvre.zoom(2, evt.gesture.center, false);
+				var zoomAt = svgManoeuvre.getViewboxCoords(evt.gesture.center);
+				svgManoeuvre.zoom(2, zoomAt.x, zoomAt.y, false);
 				break;
 		}
 	},
@@ -67,7 +69,8 @@ var svgManoeuvre = {
 		evt = window.EventUtil.getEvent(evt);
 		var delta = window.EventUtil.getWheelDelta(evt);
 		var k = Math.pow(2,delta/720);
-		svgManoeuvre.zoom(k, evt, false);
+		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y, false);
 	},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
@@ -97,11 +100,7 @@ var svgManoeuvre = {
 		matrix[5] += dy;
 		return matrix;
 	},
-	zoom: function (scale, center, useStartMatrix) {
-		var zoomAt = svgManoeuvre.getViewboxCoords(center);
-		svgManoeuvre.zoomSVG(scale, zoomAt.x, zoomAt.y, false);
-	},
-	zoomSVG: function (scale, svgX, svgY, useStartMatrix) {
+	zoom: function (scale, svgX, svgY, useStartMatrix) {
 		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
 		this.setMatrix(svgManoeuvre.zoomMatrix(newMatrix, scale, svgX, svgY));
 	},
