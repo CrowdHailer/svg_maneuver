@@ -25,6 +25,8 @@ var svgManoeuvre = {
 	homeMatrix: [1,0,0,1,0,0],
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
+	//set viewbox to whole area
+	//set home transform to initial area
 	// Need to add max zooms max pans etc
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);

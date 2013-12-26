@@ -16,6 +16,9 @@ This method used information from both the svg element and a g (group) element c
 The advantage of this is that all browsers that support svg support transform on elements in an svg so no proprietry prefixes are necessary.
 Seams to re render all child nodes as a large svg is much slower than a small svg.
 
+SET VIEW BOX TO WHOLE AREA THAT MIGHT BE SHOWN
+SET INITIAL TRASFORM FOR HOME VIEW
+
 Apply transform to svg element
 ------------------------------
 
