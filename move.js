@@ -1,25 +1,3 @@
-var EventUtil = {
-	addHandler: function (element, type, handler) {
-		if (element.addEventListener) {
-				element.addEventListener(type, handler, false);
-		} else if (element.attachEvent) {
-				element.attachEvent("on" + type, handler);
-		} else {
-				element["on" + type] = handler;
-		}
-	},
-	getEvent: function(event) {
-		return event ? event : window.event;
-	},
-	getWheelDelta: function (event) {
-		if (event.wheelDelta) {
-			return event.wheelDelta;
-		} else {
-			return -event.detail * 40;
-		}
-	}
-};
-
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
@@ -35,8 +13,6 @@ var svgManoeuvre = {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
 		var hammertime = Hammer(document).on("touch release drag dragstart dragend doubletap transformstart transformend pinch hold swipeleft swiperight swipeup swipedown", this.gestureHandler);
-		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
-		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 	},
 	gestureHandler: function (evt) {
 		try {
@@ -89,14 +65,6 @@ var svgManoeuvre = {
 			case ("swipedown"):
 				svgManoeuvre.swipedownHandler(evt);
 		}
-	},
-	handleMouseWheel: function (evt) {
-		evt = window.EventUtil.getEvent(evt);
-		var delta = window.EventUtil.getWheelDelta(evt);
-		var k = Math.pow(2,delta/720);
-
-		svgManoeuvre.zoomPage(k, evt.pageX, evt.pageY);
-		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 	},
 	holdHandler: function (evt) {},
 	swipeupHandler: function (evt) {},
