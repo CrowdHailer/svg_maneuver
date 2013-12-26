@@ -39,8 +39,7 @@ var svgManoeuvre = {
 		}
 		switch (evt.type) {
 			case ("dragstart"):
-				svgManoeuvre.startDrag(evt);
-				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+				svgManoeuvre.startMove(evt);
 				break;
 			case ("drag"):
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
@@ -50,8 +49,7 @@ var svgManoeuvre = {
 				}
 				break;
 			case ("transformstart"):
-				svgManoeuvre.startZoom(evt);
-				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+				svgManoeuvre.startMove(evt);
 				break;
 			case ("pinch"):
 				var deltaTime = evt.gesture.timeStamp - svgManoeuvre.lastEvent
@@ -80,12 +78,11 @@ var svgManoeuvre = {
 	goTo: function (x, y, scale) {
 		this.setMatrix(svgManoeuvre.zoomMatrix([1,0,0,1,0,0], scale, x, y));
 	},
-	startZoom: function (evt) {
-		this.startMatrix = this.transMatrix.slice(0);
-	},
-	startDrag: function (evt) {
+
+	startMove: function (evt) {
 		this.startMatrix = this.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
+		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 	},
 	dragIt: function (evt) {
 		var dx = evt.gesture.deltaX;
