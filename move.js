@@ -30,7 +30,6 @@ var svgManoeuvre = {
 		var hammertime = Hammer(document).on("drag dragstart doubletap transformstart transformend pinch", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
-		
 	},
 	gestureHandler: function (evt) {
 		try {
