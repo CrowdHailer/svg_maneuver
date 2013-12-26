@@ -93,11 +93,11 @@ var svgManoeuvre = {
 		var dx = evt.gesture.deltaX;
 		var dy = evt.gesture.deltaY;
 		var scale = svgManoeuvre.scale;
-		this.pan(scale*dx, scale*dy, true);
+		this.pan(scale*dx, scale*dy);
 	},
-	pan: function (dx, dy, useStartMatrix) {
+	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
-		var newMatrix = (useStartMatrix) ? this.startMatrix.slice(0) : this.transMatrix.slice(0);
+		var newMatrix = this.startMatrix.slice(0);
 		this.setMatrix(svgManoeuvre.panMatrix(newMatrix, dx, dy));
 	},
 	panMatrix: function (matrix, dx, dy) {
