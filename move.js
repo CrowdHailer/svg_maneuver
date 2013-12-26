@@ -24,7 +24,7 @@ var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
 	startMatrix: [1,0,0,1,0,0],
-	MIN_EVENT_DELAY: 20, // time in ms limits rerendering of screen
+	MIN_EVENT_DELAY: 120, // time in ms limits rerendering of screen
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
 	isTarget: false,
@@ -46,13 +46,13 @@ var svgManoeuvre = {
 		}
 		switch (evt.type) {
 			case ("drag"):
-				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY) {
+				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.isTarget)) {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 					svgManoeuvre.dragIt(evt);
 				}
 				break;
 			case ("pinch"):
-				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY) {
+				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.isTarget)) {
 					svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
@@ -64,7 +64,7 @@ var svgManoeuvre = {
 			case ("transformend"):
 			case ("dragend"):
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-				svgManoeuvre.isTarget = false
+				svgManoeuvre.isTarget = false;
 				break;
 			case ("doubletap"):
 				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
@@ -93,12 +93,10 @@ var svgManoeuvre = {
 		svgManoeuvre.isTarget = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)
 	},
 	dragIt: function (evt) {
-		if (svgManoeuvre.isTarget) {
-			var dx = evt.gesture.deltaX;
-			var dy = evt.gesture.deltaY;
-			var scale = svgManoeuvre.scale;
-			this.pan(scale*dx, scale*dy);
-		}
+		var dx = evt.gesture.deltaX;
+		var dy = evt.gesture.deltaY;
+		var scale = svgManoeuvre.scale;
+		this.pan(scale*dx, scale*dy);
 	},
 	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
@@ -111,14 +109,12 @@ var svgManoeuvre = {
 		return matrix;
 	},
 	zoomPage: function (scale, pageX, pageY) {
-		if (svgManoeuvre.isTarget) {
-			var currentZoom = svgManoeuvre.transMatrix[0]
-			scale = (currentZoom*scale <= svgManoeuvre.MAX_ZOOM) ? scale : 1;//svgManoeuvre.MAX_ZOOM/currentZoom;
-			scale = (currentZoom*scale >= svgManoeuvre.MIN_ZOOM) ? scale : 1;//svgManoeuvre.MIN_ZOOM/currentZoom;
-			if (scale != 1) {
-				var zoomAt = svgManoeuvre.getViewboxCoords(pageX, pageY);
-				svgManoeuvre.zoomSVG(scale, zoomAt.x, zoomAt.y);
-			}
+		var currentZoom = svgManoeuvre.transMatrix[0]
+		scale = (currentZoom*scale <= svgManoeuvre.MAX_ZOOM) ? scale : 1;//svgManoeuvre.MAX_ZOOM/currentZoom;
+		scale = (currentZoom*scale >= svgManoeuvre.MIN_ZOOM) ? scale : 1;//svgManoeuvre.MIN_ZOOM/currentZoom;
+		if (scale != 1) {
+			var zoomAt = svgManoeuvre.getViewboxCoords(pageX, pageY);
+			svgManoeuvre.zoomSVG(scale, zoomAt.x, zoomAt.y);
 		}
 	},
 	zoomSVG: function (scale, svgX, svgY) {
