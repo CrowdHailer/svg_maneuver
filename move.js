@@ -1,6 +1,5 @@
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
-	homeMatrix: [1,0,0,1,0,0],
 	startMatrix: [1,0,0,1,0,0],
 	MIN_EVENT_DELAY: 120, // time in ms limits rerendering of screen
 	MAX_ZOOM: 8,
@@ -71,8 +70,8 @@ var svgManoeuvre = {
 	swiperightHandler: function (evt) {},
 	swipeleftHandler: function (evt) {},
 	swipedownHandler: function (evt) {},
-	goToHomeView: function () {
-		this.setMatrix(this.homeMatrix);
+	showAll: function () {
+		this.setMatrix([1,0,0,1,0,0]);
 	},
 	goTo: function (x, y, scale) {
 		this.setMatrix(svgManoeuvre.zoomMatrix([1,0,0,1,0,0], scale, x, y));
