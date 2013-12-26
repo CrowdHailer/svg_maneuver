@@ -24,16 +24,17 @@ var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
 	startMatrix: [1,0,0,1,0,0],
-	MIN_EVENT_DELAY: 100, // time in ms limits rerendering of screen
+	MIN_EVENT_DELAY: 20, // time in ms limits rerendering of screen
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
+	isTarget: false,
 	//set viewbox to whole area
 	//set home transform to initial area
 	// Need to add max zooms max pans etc
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		var hammertime = Hammer(document).on("drag dragstart doubletap transformstart transformend pinch", this.gestureHandler);
+		var hammertime = Hammer(document).on("drag dragstart dragend doubletap transformstart transformend pinch", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 	},
@@ -42,9 +43,6 @@ var svgManoeuvre = {
 			evt.gesture.preventDefault();
 		} catch (error) {
 			console.log(error);
-		}
-		if (!svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)){
-			return;
 		}
 		switch (evt.type) {
 			case ("drag"):
@@ -64,7 +62,9 @@ var svgManoeuvre = {
 				svgManoeuvre.startMove(evt);
 				break;
 			case ("transformend"):
+			case ("dragend"):
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+				svgManoeuvre.isTarget = false
 				break;
 			case ("doubletap"):
 				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
@@ -90,12 +90,15 @@ var svgManoeuvre = {
 		this.startMatrix = this.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
 		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+		svgManoeuvre.isTarget = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)
 	},
 	dragIt: function (evt) {
-		var dx = evt.gesture.deltaX;
-		var dy = evt.gesture.deltaY;
-		var scale = svgManoeuvre.scale;
-		this.pan(scale*dx, scale*dy);
+		if (svgManoeuvre.isTarget) {
+			var dx = evt.gesture.deltaX;
+			var dy = evt.gesture.deltaY;
+			var scale = svgManoeuvre.scale;
+			this.pan(scale*dx, scale*dy);
+		}
 	},
 	pan: function (dx, dy) {
 		// Hammer dx and dy properties are related to position at gesture start, therefore must always refer to matrix at start of gesture.
@@ -108,14 +111,15 @@ var svgManoeuvre = {
 		return matrix;
 	},
 	zoomPage: function (scale, pageX, pageY) {
-		var currentZoom = svgManoeuvre.transMatrix[0]
-		scale = (currentZoom*scale <= svgManoeuvre.MAX_ZOOM) ? scale : 1;//svgManoeuvre.MAX_ZOOM/currentZoom;
-		scale = (currentZoom*scale >= svgManoeuvre.MIN_ZOOM) ? scale : 1;//svgManoeuvre.MIN_ZOOM/currentZoom;
-		if (scale != 1) {
-			var zoomAt = svgManoeuvre.getViewboxCoords(pageX, pageY);
-			svgManoeuvre.zoomSVG(scale, zoomAt.x, zoomAt.y);
+		if (svgManoeuvre.isTarget) {
+			var currentZoom = svgManoeuvre.transMatrix[0]
+			scale = (currentZoom*scale <= svgManoeuvre.MAX_ZOOM) ? scale : 1;//svgManoeuvre.MAX_ZOOM/currentZoom;
+			scale = (currentZoom*scale >= svgManoeuvre.MIN_ZOOM) ? scale : 1;//svgManoeuvre.MIN_ZOOM/currentZoom;
+			if (scale != 1) {
+				var zoomAt = svgManoeuvre.getViewboxCoords(pageX, pageY);
+				svgManoeuvre.zoomSVG(scale, zoomAt.x, zoomAt.y);
+			}
 		}
-		
 	},
 	zoomSVG: function (scale, svgX, svgY) {
 		var newMatrix = this.startMatrix.slice(0);
