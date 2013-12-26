@@ -49,27 +49,8 @@ var svgManoeuvre = {
 			case ("release"):
 				//alert('bosh');
 				break;
-			case ("hold"):
-				svgManoeuvre.holdHandler(evt);
-				break;
-			case ("swipeup"):
-				svgManoeuvre.swipeupHandler(evt);
-				break;
-			case ("swiperight"):
-				svgManoeuvre.swiperightHandler(evt);
-				break;
-			case ("swipeleft"):
-				svgManoeuvre.swipeleftHandler(evt);
-				break;
-			case ("swipedown"):
-				svgManoeuvre.swipedownHandler(evt);
 		}
 	},
-	holdHandler: function (evt) {},
-	swipeupHandler: function (evt) {},
-	swiperightHandler: function (evt) {},
-	swipeleftHandler: function (evt) {},
-	swipedownHandler: function (evt) {},
 	showAll: function () {
 		this.setMatrix([1,0,0,1,0,0]);
 	},
