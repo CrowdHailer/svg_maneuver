@@ -34,7 +34,7 @@ var svgManoeuvre = {
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		var hammertime = Hammer(document).on("drag dragstart dragend doubletap transformstart transformend pinch", this.gestureHandler);
+		var hammertime = Hammer(document).on("drag dragstart dragend doubletap transformstart transformend pinch hold", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 	},
@@ -70,6 +70,9 @@ var svgManoeuvre = {
 				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 				break;
+			case ("hold"):
+				svgManoeuvre.holdHandler(evt);
+				break;
 		}
 	},
 	handleMouseWheel: function (evt) {
@@ -79,6 +82,9 @@ var svgManoeuvre = {
 
 		svgManoeuvre.zoomPage(k, evt.pageX, evt.pageY);
 		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+	},
+	holdHandler: function (evt) {
+		console.log("No handler for hold event");
 	},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
