@@ -25,12 +25,12 @@ var svgManoeuvre = {
 	homeMatrix: [1,0,0,1,0,0],
 	// Need to add max zooms max pans etc
 	init: function (svgElement, transformGroupId) {
-		transformGroup = document.getElementById(transformGroupId);
+		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
 		var hammertime = Hammer(document).on("drag dragstart doubletap transformstart transformend pinch", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
-		this.transformGroup = transformGroup;
+		
 	},
 	gestureHandler: function (evt) {
 		try {
