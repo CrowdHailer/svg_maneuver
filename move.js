@@ -34,7 +34,7 @@ var svgManoeuvre = {
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		var hammertime = Hammer(document).on("drag dragstart dragend doubletap transformstart transformend pinch hold swipeleft swiperight swipeup swipedown", this.gestureHandler);
+		var hammertime = Hammer(document).on("touch release drag dragstart dragend doubletap transformstart transformend pinch hold swipeleft swiperight swipeup swipedown", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 	},
@@ -57,8 +57,9 @@ var svgManoeuvre = {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
 				break;
-			case ("transformstart"):
-			case ("dragstart"):
+			//case ("transformstart"):
+			//case ("dragstart"):
+			case ("touch"):
 				svgManoeuvre.startMove(evt);
 				break;
 			case ("transformend"):
@@ -69,6 +70,9 @@ var svgManoeuvre = {
 			case ("doubletap"):
 				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+				break;
+			case ("release"):
+				//alert('bosh');
 				break;
 			case ("hold"):
 				svgManoeuvre.holdHandler(evt);
