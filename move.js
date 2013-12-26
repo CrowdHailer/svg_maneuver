@@ -34,7 +34,7 @@ var svgManoeuvre = {
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		var hammertime = Hammer(document).on("drag dragstart dragend doubletap transformstart transformend pinch hold", this.gestureHandler);
+		var hammertime = Hammer(document).on("drag dragstart dragend doubletap transformstart transformend pinch hold swipeleft swiperight swipeup swipedown", this.gestureHandler);
 		window.EventUtil.addHandler(document, "mousewheel", this.handleMouseWheel);
 		window.EventUtil.addHandler(document, "DOMMouseScroll", this.handleMouseWheel);
 	},
@@ -73,6 +73,17 @@ var svgManoeuvre = {
 			case ("hold"):
 				svgManoeuvre.holdHandler(evt);
 				break;
+			case ("swipeup"):
+				svgManoeuvre.swipeupHandler(evt);
+				break;
+			case ("swiperight"):
+				svgManoeuvre.swiperightHandler(evt);
+				break;
+			case ("swipeleft"):
+				svgManoeuvre.swipeleftHandler(evt);
+				break;
+			case ("swipedown"):
+				svgManoeuvre.swipedownHandler(evt);
 		}
 	},
 	handleMouseWheel: function (evt) {
@@ -83,9 +94,11 @@ var svgManoeuvre = {
 		svgManoeuvre.zoomPage(k, evt.pageX, evt.pageY);
 		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 	},
-	holdHandler: function (evt) {
-		console.log("No handler for hold event");
-	},
+	holdHandler: function (evt) {},
+	swipeupHandler: function (evt) {},
+	swiperightHandler: function (evt) {},
+	swipeleftHandler: function (evt) {},
+	swipedownHandler: function (evt) {},
 	goToHomeView: function () {
 		this.setMatrix(this.homeMatrix);
 	},
