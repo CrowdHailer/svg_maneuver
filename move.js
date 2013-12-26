@@ -23,6 +23,8 @@ var EventUtil = {
 var svgManoeuvre = {
 	transMatrix: [1,0,0,1,0,0],
 	homeMatrix: [1,0,0,1,0,0],
+	MAX_ZOOM: 8,
+	MIN_ZOOM: 1,
 	// Need to add max zooms max pans etc
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
@@ -68,6 +70,11 @@ var svgManoeuvre = {
 		var delta = window.EventUtil.getWheelDelta(evt);
 		var k = Math.pow(2,delta/720);
 		var zoomAt = svgManoeuvre.getViewboxCoords(evt);
+		
+		var currentZoom = svgManoeuvre.transMatrix[0]
+		k = (currentZoom*k <= svgManoeuvre.MAX_ZOOM) ? k : svgManoeuvre.MAX_ZOOM/currentZoom;
+		k = (currentZoom*k >= svgManoeuvre.MIN_ZOOM) ? k : svgManoeuvre.MIN_ZOOM/currentZoom;
+		console.log(k);
 		svgManoeuvre.zoom(k, zoomAt.x, zoomAt.y, false);
 	},
 	goToHomeView: function () {
@@ -76,7 +83,6 @@ var svgManoeuvre = {
 	goTo: function (x, y, scale) {
 		this.setMatrix(svgManoeuvre.zoomMatrix([1,0,0,1,0,0], scale, x, y));
 	},
-
 	startMove: function (evt) {
 		this.startMatrix = this.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
