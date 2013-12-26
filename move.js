@@ -43,6 +43,9 @@ var svgManoeuvre = {
 		} catch (error) {
 			console.log(error);
 		}
+		if (!svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)){
+			return;
+		}
 		switch (evt.type) {
 			case ("drag"):
 				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY) {
@@ -138,6 +141,16 @@ var svgManoeuvre = {
 	},
 	getScale: function () {
 		return this.svgElement.getScreenCTM().inverse().a;
+	},
+	isDescendant: function (parent, child) {
+		var node = child.parentNode;
+		while (node != null) {
+			if (node == parent) {
+				return true;
+			}
+			node = node.parentNode;
+			}
+		return false;
 	},
 	getViewbox: function (svgElement) {
 		return svgElement.getAttribute('viewBox').split(' ');
