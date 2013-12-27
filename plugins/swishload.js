@@ -1,95 +1,42 @@
-svgManoeuvre.holdHandler = function (evt) {
-	svgManoeuvre.svgMove = false;
-	if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
-		svgManoeuvre.swishLoad = true;
-		console.log(evt.target);
-		var title = (evt.target.getAttribute('data-swipetitle'));
-		if (title) {
-			console.log(title);
-			console.log(evt.target.tagName);
-		}
-	}
-};
-/*svgManoeuvre.swipeupHandler = function (evt) {
-	console.log("swipe up");
-};
-svgManoeuvre.swipedownHandler = function (evt) {
-	console.log("swipe down");
-};
-svgManoeuvre.swipeleftHandler = function (evt) {
-	console.log("swipe left");
-};
-svgManoeuvre.swiperightHandler = function (evt) {
-	console.log("swipe right");
-};*/
-svgManoeuvre.gestureHandler = function (evt) {
-	console.log(evt.type);
-	try {
-		evt.gesture.preventDefault();
-	} catch (error) {
-		console.log(error);
-	}
-	switch (evt.type) {
-		case ("drag"):
-			if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
-				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-				svgManoeuvre.dragIt(evt);
-			}
-			break;
-		case ("pinch"):
-			if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
-				svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
-				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-			}
-			break;
-		case ("touch"):
-			svgManoeuvre.swishLoad = false;
-		case ("transformstart"):
-		case ("dragstart"):
-			svgManoeuvre.startMove(evt);
-			break;
-		case ("transformend"):
-		case ("dragend"):
-			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-			
-			if (svgManoeuvre.swishLoad) {
-				alert('load up for ' + evt.gesture.direction);
-			}
-			break;
-		case ("doubletap"):
-			svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
-			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-			break;
-		case ("release"):
-			svgManoeuvre.svgMove = false;
-			//alert('bosh');
-			break;
-		case ("hold"):
-			svgManoeuvre.holdHandler(evt);
-			break;
-		case ("swipeup"):
-			svgManoeuvre.swipeupHandler(evt);
-			break;
-		case ("swiperight"):
-			svgManoeuvre.swiperightHandler(evt);
-			break;
-		case ("swipeleft"):
-			svgManoeuvre.swipeleftHandler(evt);
-			break;
-		case ("swipedown"):
-			svgManoeuvre.swipedownHandler(evt);
-	}
-};
-svgManoeuvre.startMove = function (evt) {
-	svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-	svgManoeuvre.scale = svgManoeuvre.getScale();
-	svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-	if (!svgManoeuvre.swishLoad) {svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target);}
-	//Line adjusted to depend account for order of hold drag start etc
-};
-var swishly = {
+svgManoeuvre.plugins.swishLoad = {
 	init: function () {
-		alert('swishly');
+		svgManoeuvre.swishLoad = false;
+		
+		//overwrite start handlers for transforms to only activate when there is no call for swish loading
+		svgManoeuvre.gestureHandlers.touch = this.startHandler;
+		svgManoeuvre.gestureHandlers.dragstart = this.startHandler;
+		svgManoeuvre.gestureHandlers.transformstart = this.startHandler;
+		
+		svgManoeuvre.gestureHandlers.release = this.releaseHandler;
+		
+		//adds extra handler for hold
+		svgManoeuvre.gestureHandlers.hold = this.holdHandler;
+		svgManoeuvre.gestureHandlers.dragend = this.dragendHandler;
 	},
-	block: 4
+	startHandler: function (evt) {
+		if (!svgManoeuvre.swishLoad) {
+			svgManoeuvre.startMove(evt);
+		}
+	},
+	releaseHandler: function (evt) {
+		svgManoeuvre.svgMove = false;
+		svgManoeuvre.swishLoad = false;
+	},
+	holdHandler: function (evt) {
+		svgManoeuvre.svgMove = false;
+		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
+			svgManoeuvre.swishLoad = true;
+			console.log(evt.target);
+			var title = (evt.target.getAttribute('data-swipetitle'));
+			if (title) {
+				console.log(title);
+				console.log(evt.target.tagName);
+			}
+		}
+	},
+	dragendHandler: function (evt) {
+		if (svgManoeuvre.swishLoad) {
+			alert('load up for ' + evt.gesture.direction);
+		}
+	},
 };
