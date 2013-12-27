@@ -34,18 +34,12 @@ var svgManoeuvre = {
 		dragstart: function (evt) {
 			svgManoeuvre.startMove(evt);
 		},
-		dragend: function (evt) {
-			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-		},
 		doubletap: function (evt) {
 			svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 		},
 		transformstart: function (evt) {
 			svgManoeuvre.startMove(evt);
-		},
-		transformend: function (evt) {
-			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 		},
 		pinch: function (evt) {
 			if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
