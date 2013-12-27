@@ -12,8 +12,7 @@ var svgManoeuvre = {
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
-		var hammertime = Hammer(document).on("touch release drag dragstart dragend doubletap transformstart transformend pinch hold swipeleft swiperight swipeup swipedown", this.gestureHandler);
-		console.log(svgManoeuvre.getGestureTypes().join(' '));
+		var hammertime = Hammer(document).on(svgManoeuvre.getGestureTypes().join(' '), this.gestureHandler);
 	},
 	gestureHandler: function (evt) {
 		try {
@@ -21,49 +20,43 @@ var svgManoeuvre = {
 		} catch (error) {
 			console.log(error);
 		}
-		switch (evt.type) {
-			case ("drag"):
-				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
-					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-					svgManoeuvre.dragIt(evt);
-				}
-				break;
-			case ("pinch"):
-				if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
-					svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
-					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-				}
-				break;
-			case ("touch"):
-			case ("transformstart"):
-			case ("dragstart"):
-				svgManoeuvre.startMove(evt);
-				break;
-			case ("transformend"):
-			case ("dragend"):
-				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-				
-				break;
-			case ("doubletap"):
-				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
-				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-				break;
-			case ("release"):
-				svgManoeuvre.svgMove = false;
-				//alert('bosh');
-				break;
-		}
+		svgManoeuvre.gestureHandlers[evt.type](evt);
 	},
 	gestureHandlers: {
-		touch: function (evt) {},
-		release: function (evt) {},
-		drag: function (evt) {},
-		dragstart: function (evt) {},
-		dragend: function (evt) {},
-		doubletap: function (evt) {},
-		transformstart: function (evt) {},
-		transformend: function (evt) {},
-		pinch: function (evt) {},
+		touch: function (evt) {
+			svgManoeuvre.startMove(evt);
+		},
+		release: function (evt) {
+			svgManoeuvre.svgMove = false;
+		},
+		drag: function (evt) {
+			if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
+				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+				svgManoeuvre.dragIt(evt);
+			}
+		},
+		dragstart: function (evt) {
+			svgManoeuvre.startMove(evt);
+		},
+		dragend: function (evt) {
+			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		},
+		doubletap: function (evt) {
+			svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
+			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		},
+		transformstart: function (evt) {
+			svgManoeuvre.startMove(evt);
+		},
+		transformend: function (evt) {
+			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		},
+		pinch: function (evt) {
+			if (evt.gesture.timeStamp - svgManoeuvre.lastEvent > svgManoeuvre.MIN_EVENT_DELAY && (svgManoeuvre.svgMove)) {
+				svgManoeuvre.zoomPage(evt.gesture.scale, evt.gesture.center.pageX, evt.gesture.center.pageY);
+				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+			}
+		},
 	},
 	getGestureTypes : function () {
 		return Object.keys(svgManoeuvre.gestureHandlers);
