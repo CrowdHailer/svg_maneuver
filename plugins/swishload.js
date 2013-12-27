@@ -81,12 +81,12 @@ svgManoeuvre.gestureHandler = function (evt) {
 	}
 };
 svgManoeuvre.startMove = function (evt) {
-		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-		svgManoeuvre.scale = svgManoeuvre.getScale();
-		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-		if (!svgManoeuvre.swishLoad) {svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target);}
-		//Line adjusted to depend account for order of hold drag start etc
-	},
+	svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+	svgManoeuvre.scale = svgManoeuvre.getScale();
+	svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+	if (!svgManoeuvre.swishLoad) {svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target);}
+	//Line adjusted to depend account for order of hold drag start etc
+};
 var swishly = {
 	init: function () {
 		alert('swishly');
