@@ -35,8 +35,10 @@ var svgManoeuvre = {
 			svgManoeuvre.startMove(evt);
 		},
 		doubletap: function (evt) {
-			svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
-			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+			if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
+				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
+				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+			}
 		},
 		transformstart: function (evt) {
 			svgManoeuvre.startMove(evt);
@@ -61,7 +63,7 @@ var svgManoeuvre = {
 		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
 		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
-		svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)
+		svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target);
 	},
 	dragIt: function (evt) {
 		var dx = evt.gesture.deltaX;
