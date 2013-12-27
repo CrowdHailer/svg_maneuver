@@ -5,6 +5,7 @@ var svgManoeuvre = {
 	MAX_ZOOM: 8,
 	MIN_ZOOM: 1,
 	svgMove: false,
+	plugins: {},
 	//set viewbox to whole area
 	//set home transform to initial area
 	// Need to add max zooms max pans etc

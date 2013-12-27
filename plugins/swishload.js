@@ -15,6 +15,7 @@ svgManoeuvre.swiperightHandler = function (evt) {
 	console.log("swipe right");
 };
 svgManoeuvre.gestureHandler = function (evt) {
+	console.log(evt.type);
 	try {
 		evt.gesture.preventDefault();
 	} catch (error) {
@@ -65,4 +66,11 @@ svgManoeuvre.gestureHandler = function (evt) {
 		case ("swipedown"):
 			svgManoeuvre.swipedownHandler(evt);
 	}
+};
+
+var swishly = {
+	init: function () {
+		alert('swishly');
+	},
+	block: 4
 };
