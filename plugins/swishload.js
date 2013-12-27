@@ -1,8 +1,9 @@
 svgManoeuvre.holdHandler = function (evt) {
 	svgManoeuvre.svgMove = false;
+	svgManoeuvre.dataLoad = true;
 	console.log(evt.target);
 };
-svgManoeuvre.swipeupHandler = function (evt) {
+/*svgManoeuvre.swipeupHandler = function (evt) {
 	console.log("swipe up");
 };
 svgManoeuvre.swipedownHandler = function (evt) {
@@ -13,7 +14,7 @@ svgManoeuvre.swipeleftHandler = function (evt) {
 };
 svgManoeuvre.swiperightHandler = function (evt) {
 	console.log("swipe right");
-};
+};*/
 svgManoeuvre.gestureHandler = function (evt) {
 	console.log(evt.type);
 	try {
@@ -38,11 +39,15 @@ svgManoeuvre.gestureHandler = function (evt) {
 		//case ("dragstart"):
 		case ("touch"):
 			svgManoeuvre.startMove(evt);
+			svgManoeuvre.dataLoad = false;
 			break;
 		case ("transformend"):
 		case ("dragend"):
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 			svgManoeuvre.svgMove = false;
+			if (svgManoeuvre.dataLoad) {
+				console.log('load up for ' + evt.gesture.direction);
+			}
 			break;
 		case ("doubletap"):
 			svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
