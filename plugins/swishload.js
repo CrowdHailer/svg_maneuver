@@ -1,12 +1,13 @@
 svgManoeuvre.holdHandler = function (evt) {
 	svgManoeuvre.svgMove = false;
-	
-	svgManoeuvre.dataLoad = true;
-	console.log(evt.target);
-	var title = (evt.target.getAttribute('data-swipetitle'));
-	if (title) {
-		console.log(title);
-		console.log(evt.target.tagName);
+	if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
+		svgManoeuvre.dataLoad = true;
+		console.log(evt.target);
+		var title = (evt.target.getAttribute('data-swipetitle'));
+		if (title) {
+			console.log(title);
+			console.log(evt.target.tagName);
+		}
 	}
 };
 /*svgManoeuvre.swipeupHandler = function (evt) {
@@ -41,16 +42,16 @@ svgManoeuvre.gestureHandler = function (evt) {
 				svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 			}
 			break;
+		case ("touch"):
+			svgManoeuvre.dataLoad = false;
 		//case ("transformstart"):
 		//case ("dragstart"):
-		case ("touch"):
 			svgManoeuvre.startMove(evt);
-			svgManoeuvre.dataLoad = false;
 			break;
 		case ("transformend"):
 		case ("dragend"):
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-			svgManoeuvre.svgMove = false;
+			
 			if (svgManoeuvre.dataLoad) {
 				alert('load up for ' + evt.gesture.direction);
 			}
@@ -60,6 +61,7 @@ svgManoeuvre.gestureHandler = function (evt) {
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 			break;
 		case ("release"):
+			svgManoeuvre.svgMove = false;
 			//alert('bosh');
 			break;
 		case ("hold"):

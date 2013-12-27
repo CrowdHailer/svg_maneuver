@@ -33,21 +33,22 @@ var svgManoeuvre = {
 					svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 				}
 				break;
-			//case ("transformstart"):
-			//case ("dragstart"):
 			case ("touch"):
+			case ("transformstart"):
+			case ("dragstart"):
 				svgManoeuvre.startMove(evt);
 				break;
 			case ("transformend"):
 			case ("dragend"):
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
-				svgManoeuvre.svgMove = false;
+				
 				break;
 			case ("doubletap"):
 				svgManoeuvre.zoomPage(1.25, evt.gesture.center.pageX, evt.gesture.center.pageY);
 				svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 				break;
 			case ("release"):
+				svgManoeuvre.svgMove = false;
 				//alert('bosh');
 				break;
 		}
@@ -59,7 +60,7 @@ var svgManoeuvre = {
 		this.setMatrix(svgManoeuvre.zoomMatrix([1,0,0,1,0,0], scale, x, y));
 	},
 	startMove: function (evt) {
-		this.startMatrix = this.transMatrix.slice(0);
+		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 		svgManoeuvre.scale = svgManoeuvre.getScale();
 		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
 		svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)
