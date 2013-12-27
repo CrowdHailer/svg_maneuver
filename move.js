@@ -15,11 +15,7 @@ var svgManoeuvre = {
 		var hammertime = Hammer(document).on(svgManoeuvre.getGestureTypes().join(' '), this.gestureHandler);
 	},
 	gestureHandler: function (evt) {
-		try {
-			evt.gesture.preventDefault();
-		} catch (error) {
-			console.log(error);
-		}
+		evt.gesture.preventDefault();
 		svgManoeuvre.gestureHandlers[evt.type](evt);
 	},
 	gestureHandlers: {
