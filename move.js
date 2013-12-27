@@ -13,6 +13,7 @@ var svgManoeuvre = {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
 		var hammertime = Hammer(document).on("touch release drag dragstart dragend doubletap transformstart transformend pinch hold swipeleft swiperight swipeup swipedown", this.gestureHandler);
+		console.log(svgManoeuvre.getGestureTypes().join(' '));
 	},
 	gestureHandler: function (evt) {
 		try {
@@ -52,6 +53,20 @@ var svgManoeuvre = {
 				//alert('bosh');
 				break;
 		}
+	},
+	gestureHandlers: {
+		touch: function (evt) {},
+		release: function (evt) {},
+		drag: function (evt) {},
+		dragstart: function (evt) {},
+		dragend: function (evt) {},
+		doubletap: function (evt) {},
+		transformstart: function (evt) {},
+		transformend: function (evt) {},
+		pinch: function (evt) {},
+	},
+	getGestureTypes : function () {
+		return Object.keys(svgManoeuvre.gestureHandlers);
 	},
 	showAll: function () {
 		this.setMatrix([1,0,0,1,0,0]);
