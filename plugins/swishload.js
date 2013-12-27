@@ -1,7 +1,13 @@
 svgManoeuvre.holdHandler = function (evt) {
 	svgManoeuvre.svgMove = false;
+	
 	svgManoeuvre.dataLoad = true;
 	console.log(evt.target);
+	var title = (evt.target.getAttribute('data-swipetitle'));
+	if (title) {
+		console.log(title);
+		console.log(evt.target.tagName);
+	}
 };
 /*svgManoeuvre.swipeupHandler = function (evt) {
 	console.log("swipe up");
@@ -46,7 +52,7 @@ svgManoeuvre.gestureHandler = function (evt) {
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 			svgManoeuvre.svgMove = false;
 			if (svgManoeuvre.dataLoad) {
-				console.log('load up for ' + evt.gesture.direction);
+				alert('load up for ' + evt.gesture.direction);
 			}
 			break;
 		case ("doubletap"):
