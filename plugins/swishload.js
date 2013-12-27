@@ -1,7 +1,7 @@
 svgManoeuvre.holdHandler = function (evt) {
 	svgManoeuvre.svgMove = false;
 	if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
-		svgManoeuvre.dataLoad = true;
+		svgManoeuvre.swishLoad = true;
 		console.log(evt.target);
 		var title = (evt.target.getAttribute('data-swipetitle'));
 		if (title) {
@@ -43,16 +43,16 @@ svgManoeuvre.gestureHandler = function (evt) {
 			}
 			break;
 		case ("touch"):
-			svgManoeuvre.dataLoad = false;
-		//case ("transformstart"):
-		//case ("dragstart"):
+			svgManoeuvre.swishLoad = false;
+		case ("transformstart"):
+		case ("dragstart"):
 			svgManoeuvre.startMove(evt);
 			break;
 		case ("transformend"):
 		case ("dragend"):
 			svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
 			
-			if (svgManoeuvre.dataLoad) {
+			if (svgManoeuvre.swishLoad) {
 				alert('load up for ' + evt.gesture.direction);
 			}
 			break;
@@ -80,7 +80,13 @@ svgManoeuvre.gestureHandler = function (evt) {
 			svgManoeuvre.swipedownHandler(evt);
 	}
 };
-
+svgManoeuvre.startMove = function (evt) {
+		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		svgManoeuvre.scale = svgManoeuvre.getScale();
+		svgManoeuvre.lastEvent = evt.gesture.timeStamp;
+		if (!svgManoeuvre.swishLoad) {svgManoeuvre.svgMove = svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target);}
+		//Line adjusted to depend account for order of hold drag start etc
+	},
 var swishly = {
 	init: function () {
 		alert('swishly');
