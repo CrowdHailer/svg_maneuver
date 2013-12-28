@@ -19,6 +19,7 @@ svgManoeuvre.plugins.swishLoad = {
 		svgManoeuvre.gestureHandlers.hold = this.holdHandler;
 		svgManoeuvre.gestureHandlers.dragend = this.dragendHandler;
 	},
+	
 	startHandler: function (evt) {
 		if (!svgManoeuvre.swishLoad) {
 			svgManoeuvre.startMove(evt);
@@ -36,8 +37,18 @@ svgManoeuvre.plugins.swishLoad = {
 			svgManoeuvre.swishLoad = true;
 			var targetData = self.checkStores(target, self.dataStores);
 			if(targetData) {
-				var popUpTitle = self.callbacks[targetData.dataName]['hold'](targetData.dataValue) || targetData.dataValue;
+				//fetch data specific call back from callbacks
+				var callbackItem = self.callbacks[targetData.dataName];
+				
+				//execute callback for hold
+				var popUpTitle = callbackItem['hold'](targetData.dataValue) || {title:targetData.dataValue};
 				console.log(popUpTitle);
+				var slides = ['up', 'left', 'right', 'down'];
+				for (i=0; i<slides.length; i++) {
+					if(callbackItem[slides[i]]) {
+						console.log('found');
+					}
+				}
 			}
 		}
 		if (targetData) {
