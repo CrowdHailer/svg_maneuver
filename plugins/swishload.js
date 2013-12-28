@@ -1,8 +1,8 @@
 svgManoeuvre.plugins.swishLoad = {
-	init: function () {
+	init: function (callbacks) {
 		svgManoeuvre.swishLoad = false;
-		
-		this.dataTitle = Object.keys(this.callbackFunctions);
+		this.callbacks = callbacks;
+		this.dataStores = Object.keys(this.callbacks);
 		
 		//overwrite start handlers for transforms to only activate when there is no call for swish loading
 		svgManoeuvre.gestureHandlers.touch = this.startHandler;
@@ -30,10 +30,10 @@ svgManoeuvre.plugins.swishLoad = {
 		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
 			svgManoeuvre.swishLoad = true;
 			var target = evt.target;
-			for (i = 0; i < self.dataTitle.length; i++) {
-				var identifier = target.getAttribute('data-' + self.dataTitle[i]);
+			for (i = 0; i < self.dataStores.length; i++) {
+				var identifier = target.getAttribute('data-' + self.dataStores[i]);
 				if (identifier) {
-					self.callbackFunctions[self.dataTitle[i]](identifier);
+					self.callbackFunctions[self.dataStores[i]](identifier);
 					break;
 				}
 			}
@@ -45,15 +45,27 @@ svgManoeuvre.plugins.swishLoad = {
 			alert('load up for ' + evt.gesture.direction);
 		}
 	},
-	dataTitle: [],
-	callbackFunctions: {
-		station: function (data) {
-			console.log('smells' + data);
-		},
-		line: function (data) {
-			console.log('boooom' + data);
+	checkStores: function (element, storeNames) {
+		for (i=0; i<storeLocations.length; i++) {
+			var dataName = storeNames[i];
+			var dataValue = element.getAttribute('data-' + dataName);
+			if (dataValue) {
+				return {dataName: dataName, dataValue: dataValue};
+			}
+			else {
+				return false;
+			}
 		}
 	},
+	executeStores: function (element, storeNames) {
+		for (i=0; i<storeLocations.length; i++) {
+			var name = storeNames[i]
+			var value = element.getAttribute('data-' + name);
+			if (value) {
+				this.callbacks[name]['hold'](vale);
+			}
+		}
+	}
 	buildMenu: function () {},
 	showMenu: function () {},
 	directionCallback: function (data) {}
