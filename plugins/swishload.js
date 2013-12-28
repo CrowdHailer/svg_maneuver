@@ -32,13 +32,20 @@ svgManoeuvre.plugins.swishLoad = {
 		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, target)) {
 			svgManoeuvre.swishLoad = true;
 			var targetData = self.checkStores(target, self.dataStores);
-			console.log(targetData);
-			self.callbacks[targetData.dataName]['hold'](targetData.dataValue);
+			if(targetData) {
+				var popUpTitle = self.callbacks[targetData.dataName]['hold'](targetData.dataValue) || targetData.dataValue;
+				console.log(popUpTitle);
+			}
+		}
+		if (targetData) {
+			self.lastData = targetData
 		}
 	},
 	dragendHandler: function (evt) {
 		if (svgManoeuvre.swishLoad) {
-			alert('load up for ' + evt.gesture.direction);
+			var self = svgManoeuvre.plugins.swishLoad;
+			var targetData = self.lastData;
+			self.callbacks[targetData.dataName][evt.gesture.direction](targetData.dataValue);
 		}
 	},
 	checkStores: function (element, storeNames) {

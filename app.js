@@ -5,6 +5,7 @@ var swishlyFunctions = {
 	station: {
 		hold: function (data) {
 			console.log('Station hold function ' + data);
+			//should return title for main and directions
 		},
 		left: function (data) {
 			console.log('Station left function ' + data);
@@ -22,6 +23,7 @@ var swishlyFunctions = {
 	line: {
 		hold: function (data) {
 			console.log('Line hold function ' + data);
+			return 'Dave'
 		}
 	}
 
