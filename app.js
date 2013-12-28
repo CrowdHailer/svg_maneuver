@@ -9,16 +9,16 @@ var swishlyFunctions = {
 			return {title: data, up: 'Live Departures', down: 'Station Info', left: 'Depart from', right: 'Arrive at'}
 		},
 		left: function (data) {
-			console.log('Station left function ' + data);
+			alert('Station left function ' + data);
 		},
 		up: function (data) {
-			console.log('Station up function ' + data);
+			alert('Station up function ' + data);
 		},
 		down: function (data) {
-			console.log('Station down function ' + data);
+			alert('Station down function ' + data);
 		},
 		right: function (data) {
-			console.log('Station right function ' + data);
+			alert('Station right function ' + data);
 		}
 	},
 	line: {
