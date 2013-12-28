@@ -30,7 +30,16 @@ var swishlyFunctions = {
 };
 
 var tapFunctions = {
-	id: function (evt) {}
+	id: function (evt) {},
+	'home-button': function (evt) {
+		console.log('smelly');
+	},
+	'goTo-button': function (evt) {
+		console.log('oop');
+	},
+	DEFAULT: function (evt) {
+		console.log('Default tap response');
+	},
 
 }; 
 

@@ -45,7 +45,11 @@ svgManoeuvre.plugins.swishLoad = {
 		if (svgManoeuvre.swishLoad) {
 			var self = svgManoeuvre.plugins.swishLoad;
 			var targetData = self.lastData;
-			self.callbacks[targetData.dataName][evt.gesture.direction](targetData.dataValue);
+			if (targetData) {
+				if(self.callbacks[targetData.dataName][evt.gesture.direction]) {
+					self.callbacks[targetData.dataName][evt.gesture.direction](targetData.dataValue);
+				}
+			}
 		}
 	},
 	checkStores: function (element, storeNames) {
