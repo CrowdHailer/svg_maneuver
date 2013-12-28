@@ -3,6 +3,7 @@ svgManoeuvre.plugins.swishLoad = {
 		svgManoeuvre.swishLoad = false;
 		this.callbacks = callbacks;
 		this.dataStores = Object.keys(this.callbacks);
+		//console.log(this.dataStores);
 		
 		//overwrite start handlers for transforms to only activate when there is no call for swish loading
 		svgManoeuvre.gestureHandlers.touch = this.startHandler;
@@ -26,18 +27,13 @@ svgManoeuvre.plugins.swishLoad = {
 	},
 	holdHandler: function (evt) {
 		var self = svgManoeuvre.plugins.swishLoad;
+		var target = evt.target;
 		svgManoeuvre.svgMove = false;
-		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, evt.target)) {
+		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, target)) {
 			svgManoeuvre.swishLoad = true;
-			var target = evt.target;
-			for (i = 0; i < self.dataStores.length; i++) {
-				var identifier = target.getAttribute('data-' + self.dataStores[i]);
-				if (identifier) {
-					self.callbackFunctions[self.dataStores[i]](identifier);
-					break;
-				}
-			}
-			identifier = identifier || 'DEFAULT';
+			var targetData = self.checkStores(target, self.dataStores);
+			console.log(targetData);
+			self.callbacks[targetData.dataName]['hold'](targetData.dataValue);
 		}
 	},
 	dragendHandler: function (evt) {
@@ -46,16 +42,14 @@ svgManoeuvre.plugins.swishLoad = {
 		}
 	},
 	checkStores: function (element, storeNames) {
-		for (i=0; i<storeLocations.length; i++) {
+		for (i=0; i<storeNames.length; i++) {
 			var dataName = storeNames[i];
 			var dataValue = element.getAttribute('data-' + dataName);
 			if (dataValue) {
 				return {dataName: dataName, dataValue: dataValue};
 			}
-			else {
-				return false;
-			}
 		}
+		return false;
 	},
 	executeStores: function (element, storeNames) {
 		for (i=0; i<storeLocations.length; i++) {
@@ -65,7 +59,7 @@ svgManoeuvre.plugins.swishLoad = {
 				this.callbacks[name]['hold'](vale);
 			}
 		}
-	}
+	},
 	buildMenu: function () {},
 	showMenu: function () {},
 	directionCallback: function (data) {}
