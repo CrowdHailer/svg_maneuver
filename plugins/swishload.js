@@ -1,12 +1,18 @@
 svgManoeuvre.plugins.swishLoad = {
 	init: function (callbacks) {
-		svgManoeuvre.swishLoad = false;
+		svgManoeuvre.targetData = false;
 		this.callbacks = callbacks;
 		this.dataStores = Object.keys(this.callbacks);
 		//console.log(this.dataStores);
-		
+		var self = svgManoeuvre.plugins.swishLoad;
 		if(svgManoeuvre.plugins.tapManager) {
 			console.log('SwishlySelect has found TapManager');
+			var tm = svgManoeuvre.plugins.tapManager;
+			console.log(tm);
+			tm.callbacks['FINALLY'] = function (evt) {
+				self.clearSwishly();
+				self.closeSwishlyMenu();
+			}
 			
 			
 		}
@@ -21,59 +27,58 @@ svgManoeuvre.plugins.swishLoad = {
 		svgManoeuvre.gestureHandlers.hold = this.holdHandler;
 		svgManoeuvre.gestureHandlers.dragend = this.dragendHandler;
 	},
-	HEADINGS: ['up', 'left', 'right', 'down']; //put in the correct order for iterating through to set up menu
+	HEADINGS: ['up', 'left', 'right', 'down'], //put in the correct order for iterating through to set up menu
 	template: 'string',
 	startHandler: function (evt) {
-		if (!svgManoeuvre.swishLoad) {
+		if (!svgManoeuvre.plugins.swishLoad.targetData) {
 			svgManoeuvre.startMove(evt);
 		}
 	},
 	releaseHandler: function (evt) {
 		svgManoeuvre.svgMove = false;
-		svgManoeuvre.swishLoad = false;
+		svgManoeuvre.plugins.swishLoad.targetData = false;
 	},
 	holdHandler: function (evt) {
 		var self = svgManoeuvre.plugins.swishLoad;
 		var target = evt.target;
-		var targetData = false;
+		self.targetData = false;
 		
 		
 		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, target)) {
-			svgManoeuvre.swishLoad = true;
+			self.targetData = self.checkStores(target, self.dataStores);
 			
 			//optional as can cause screen to freeze for no reason
 			svgManoeuvre.svgMove = false;
+		}
+		if(self.targetData) {
+			//fetch data specific call back from callbacks
+			var callbackItem = self.callbacks[self.targetData.dataName];
 			
-			var targetData = self.checkStores(target, self.dataStores);
-			if(targetData) {
-				//fetch data specific call back from callbacks
-				var callbackItem = self.callbacks[targetData.dataName];
-				
-				//execute callback for hold
-				var popUpTitle = callbackItem['hold'](targetData.dataValue) || {title:targetData.dataValue};
-				console.log(popUpTitle);
-				var tm = svgManoeuvre.plugins.tapManager;
-				var slides = ['up', 'left', 'right', 'down'];
-				for (i=0; i<slides.length; i++) {
-					//need to include test exists;
-					tm.callbacks['swishly-' + slides[i]] = callbackItem[slides[i]];
-				}
-				
+			//execute callback for hold
+			var popUpTitle = callbackItem['hold'](self.targetData.dataValue) || {title:self.targetData.dataValue};
+			console.log(popUpTitle);
+			var tm = svgManoeuvre.plugins.tapManager;
+			var slides = ['up', 'left', 'right', 'down'];
+			for (i=0; i<slides.length; i++) {
+				//need to include test exists;
+				tm.callbacks['swishly-' + slides[i]] = callbackItem[slides[i]];
 			}
+			
 		}
-		if (targetData) {
-			self.lastData = targetData
-		}
+		
+
 	},
 	dragendHandler: function (evt) {
-		if (svgManoeuvre.swishLoad) {
+		if (svgManoeuvre.plugins.swishLoad.targetData) {
 			var self = svgManoeuvre.plugins.swishLoad;
-			var targetData = self.lastData;
+			var targetData = self.targetData;
 			if (targetData) {
 				if(self.callbacks[targetData.dataName][evt.gesture.direction]) {
 					self.callbacks[targetData.dataName][evt.gesture.direction](targetData.dataValue);
 				}
 			}
+			self.clearSwishly();
+			self.closeSwishlyMenu();
 		}
 	},
 	addSwishly: function (elementCallback) {
@@ -86,8 +91,14 @@ svgManoeuvre.plugins.swishLoad = {
 		}
 	},
 	clearSwishly: function () {
-	
+		var tm = svgManoeuvre.plugins.tapManager;
+		var directions = this.HEADINGS;
+		for (i=0; i<directions.length; i++) {
+			var direction = directions[i];
+			tm.callbacks['swishly-' + direction] = null;
+		}
 	},
+	closeSwishlyMenu: function () {},
 	checkStores: function (element, storeNames) {
 		for (i=0; i<storeNames.length; i++) {
 			var dataName = storeNames[i];
