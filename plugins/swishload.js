@@ -63,6 +63,7 @@ svgManoeuvre.plugins.swishLoad = {
 				//need to include test exists;
 				tm.callbacks['swishly-' + slides[i]] = callbackItem[slides[i]];
 			}
+			self.showMenu()
 			
 		}
 		
@@ -98,7 +99,9 @@ svgManoeuvre.plugins.swishLoad = {
 			tm.callbacks['swishly-' + direction] = null;
 		}
 	},
-	closeSwishlyMenu: function () {},
+	closeSwishlyMenu: function () {
+		document.getElementById('swishly-selection').style.display = 'none';
+	},
 	checkStores: function (element, storeNames) {
 		for (i=0; i<storeNames.length; i++) {
 			var dataName = storeNames[i];
@@ -119,5 +122,7 @@ svgManoeuvre.plugins.swishLoad = {
 		}
 	},
 	buildMenu: function () {},
-	showMenu: function () {},
+	showMenu: function () {
+		document.getElementById('swishly-selection').style.display = 'block';
+	},
 };
