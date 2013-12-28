@@ -3,6 +3,6 @@ svgManoeuvre.plugins.tapManager = {
 		svgManoeuvre.gestureHandlers.tap = this.tapHandler;
 	},
 	tapHandler: function (evt) {
-		alert('tapped');
+		console.log(evt.target);
 	}
 };
