@@ -5,6 +5,9 @@ svgManoeuvre.plugins.swishLoad = {
 		this.dataStores = Object.keys(this.callbacks);
 		//console.log(this.dataStores);
 		
+		if(svgManoeuvre.plugins.tapManager) {
+			console.log('SwishlySelect has found TapManager');
+		}
 		//overwrite start handlers for transforms to only activate when there is no call for swish loading
 		svgManoeuvre.gestureHandlers.touch = this.startHandler;
 		svgManoeuvre.gestureHandlers.dragstart = this.startHandler;

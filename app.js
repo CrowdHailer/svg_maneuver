@@ -32,10 +32,20 @@ var swishlyFunctions = {
 var tapFunctions = {
 	id: function (evt) {},
 	'home-button': function (evt) {
-		console.log('smelly');
+		svgManoeuvre.showAll();
 	},
 	'goTo-button': function (evt) {
-		console.log('oop');
+		svgManoeuvre.goTo(1200, 200, 5);
+	},
+	'pan-button': function (evt) {
+		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		svgManoeuvre.pan(10, 100);
+	},
+	'zoom-button': function (evt) {
+		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		//console.log(svgManoeuvre.getViewbox())
+		var box = svgManoeuvre.getViewbox();
+		svgManoeuvre.zoomSVG(1.25, box[2]/2, box[3]/2);
 	},
 	DEFAULT: function (evt) {
 		console.log('Default tap response');

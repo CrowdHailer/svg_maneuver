@@ -13,6 +13,7 @@ var svgManoeuvre = {
 		this.transformGroup = document.getElementById(transformGroupId);
 		this.svgElement = document.getElementById(svgElement);
 		var hammertime = Hammer(document).on(svgManoeuvre.getGestureTypes().join(' '), this.gestureHandler);
+		console.log('SVG Manoeuvre loaded with gestures - ' + svgManoeuvre.getGestureTypes().join(', '));
 	},
 	gestureHandler: function (evt) {
 		evt.gesture.preventDefault();
@@ -126,7 +127,7 @@ var svgManoeuvre = {
 		return false;
 	},
 	getViewbox: function (svgElement) {
-		return svgElement.getAttribute('viewBox').split(' ');
+		return this.svgElement.getAttribute('viewBox').split(' ');
 	},
 	setMatrix: function (updateMatrix) {
 	//Sets transform matrix of group denoted as transform group
