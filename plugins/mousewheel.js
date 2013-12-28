@@ -25,9 +25,8 @@ svgManoeuvre.plugins.mouseWheel = {
 		evt = self.EventUtil.getEvent(evt);
 		var delta = self.EventUtil.getWheelDelta(evt);
 		var k = Math.pow(2,delta/720);
-
-		svgManoeuvre.zoomPage(k, evt.pageX, evt.pageY);
 		svgManoeuvre.startMatrix = svgManoeuvre.transMatrix.slice(0);
+		svgManoeuvre.zoomPage(k, evt.pageX, evt.pageY);
 	},
 	initMouseWheel: function () {
 		var self = svgManoeuvre.plugins.mouseWheel;
