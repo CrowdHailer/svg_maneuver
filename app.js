@@ -29,6 +29,11 @@ var swishlyFunctions = {
 
 };
 
+var tapFunctions = {
+	id: function (evt) {}
+
+}; 
+
 
 svgManoeuvre.plugins.swishLoad.init(swishlyFunctions);
 svgManoeuvre.init("svgDocument", "manoeuvrable-svg");
