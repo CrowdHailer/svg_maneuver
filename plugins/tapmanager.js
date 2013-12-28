@@ -24,7 +24,7 @@ svgManoeuvre.plugins.tapManager = {
 		callbacks['FINALLY'](evt);
 		//console.log(Object.keys(evt.target)); SUPER USEFUL LINE REMEMBER
 	},
-	TAP_DEFAULT: function (evt) {}
+	TAP_DEFAULT: function (evt) {},
 	TAP_FIRST: function (evt) {},
 	TAP_FINALLY: function (evt) {}
 };

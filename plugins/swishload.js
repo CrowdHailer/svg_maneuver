@@ -7,6 +7,8 @@ svgManoeuvre.plugins.swishLoad = {
 		
 		if(svgManoeuvre.plugins.tapManager) {
 			console.log('SwishlySelect has found TapManager');
+			
+			
 		}
 		//overwrite start handlers for transforms to only activate when there is no call for swish loading
 		svgManoeuvre.gestureHandlers.touch = this.startHandler;
@@ -19,7 +21,8 @@ svgManoeuvre.plugins.swishLoad = {
 		svgManoeuvre.gestureHandlers.hold = this.holdHandler;
 		svgManoeuvre.gestureHandlers.dragend = this.dragendHandler;
 	},
-	
+	HEADINGS: ['up', 'left', 'right', 'down']; //put in the correct order for iterating through to set up menu
+	template: 'string',
 	startHandler: function (evt) {
 		if (!svgManoeuvre.swishLoad) {
 			svgManoeuvre.startMove(evt);
@@ -32,9 +35,15 @@ svgManoeuvre.plugins.swishLoad = {
 	holdHandler: function (evt) {
 		var self = svgManoeuvre.plugins.swishLoad;
 		var target = evt.target;
-		svgManoeuvre.svgMove = false;
+		var targetData = false;
+		
+		
 		if (svgManoeuvre.isDescendant(svgManoeuvre.svgElement, target)) {
 			svgManoeuvre.swishLoad = true;
+			
+			//optional as can cause screen to freeze for no reason
+			svgManoeuvre.svgMove = false;
+			
 			var targetData = self.checkStores(target, self.dataStores);
 			if(targetData) {
 				//fetch data specific call back from callbacks
@@ -43,12 +52,13 @@ svgManoeuvre.plugins.swishLoad = {
 				//execute callback for hold
 				var popUpTitle = callbackItem['hold'](targetData.dataValue) || {title:targetData.dataValue};
 				console.log(popUpTitle);
+				var tm = svgManoeuvre.plugins.tapManager;
 				var slides = ['up', 'left', 'right', 'down'];
 				for (i=0; i<slides.length; i++) {
-					if(callbackItem[slides[i]]) {
-						console.log('found');
-					}
+					//need to include test exists;
+					tm.callbacks['swishly-' + slides[i]] = callbackItem[slides[i]];
 				}
+				
 			}
 		}
 		if (targetData) {
@@ -65,6 +75,18 @@ svgManoeuvre.plugins.swishLoad = {
 				}
 			}
 		}
+	},
+	addSwishly: function (elementCallback) {
+		// requires tap Manager
+		var tm = svgManoeuvre.plugins.tapManager;
+		var directions = this.HEADINGS;
+		for (i=0; i<directions.length; i++) {
+			var direction = directions[i];
+			tm.callbacks['swishly-' + direction] = elementCallback[direction] || null;
+		}
+	},
+	clearSwishly: function () {
+	
 	},
 	checkStores: function (element, storeNames) {
 		for (i=0; i<storeNames.length; i++) {
@@ -87,5 +109,4 @@ svgManoeuvre.plugins.swishLoad = {
 	},
 	buildMenu: function () {},
 	showMenu: function () {},
-	directionCallback: function (data) {}
 };

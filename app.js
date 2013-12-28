@@ -51,6 +51,9 @@ var tapFunctions = {
 	DEFAULT: function (evt) {
 		console.log('Default tap response');
 	},
+	FIRST: function (evt) {
+		console.log('always print this');
+	}
 
 }; 
 
