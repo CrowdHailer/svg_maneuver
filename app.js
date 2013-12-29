@@ -1,3 +1,9 @@
+//Separte files for menu behaviour
+//separate files for double input fields
+// optional background frame group. show only this frame to speed up transforms
+//consider hammer scroll as plugin to hammer not svgManoeuvre
+
+
 Hammer.plugins.fakeMultitouch();
 //Hammer.plugins.showTouches();
 

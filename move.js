@@ -8,6 +8,7 @@ var svgManoeuvre = {
 	plugins: {},
 	//set viewbox to whole area
 	//set home transform to initial area
+	//set home transform as initial matrix
 	// Need to add max zooms max pans etc
 	init: function (svgElement, transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
