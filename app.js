@@ -66,5 +66,5 @@ var tapFunctions = {
 svgManoeuvre.plugins.tapManager.init(tapFunctions);
 svgManoeuvre.plugins.swishLoad.init(swishlyFunctions);
 
-svgManoeuvre.init("svgDocument", "manoeuvrable-svg");
+svgManoeuvre.init("manoeuvrable-svg");
 svgManoeuvre.plugins.mouseWheel.initMouseWheel();

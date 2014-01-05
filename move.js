@@ -10,10 +10,10 @@ var svgManoeuvre = {
 	//set home transform to initial area
 	//set home transform as initial matrix
 	// Need to add max zooms max pans etc
-	init: function (svgElement, transformGroupId) {
+	init: function (transformGroupId) {
 		this.transformGroup = document.getElementById(transformGroupId);
-		this.svgElement = document.getElementById(svgElement);
-		var hammertime = Hammer(document).on(svgManoeuvre.getGestureTypes().join(' '), this.gestureHandler);
+		this.svgElement = this.transformGroup.ownerSVGElement;
+		this.hammertime = Hammer(document).on(svgManoeuvre.getGestureTypes().join(' '), this.gestureHandler);
 		console.log('SVG Manoeuvre loaded with gestures - ' + svgManoeuvre.getGestureTypes().join(', '));
 	},
 	gestureHandler: function (evt) {
